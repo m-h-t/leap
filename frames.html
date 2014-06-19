@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<title>Getting Frames</title>
+		<script src="js/leap-0.6.0.js"></script>
+	    <script src="//js.leapmotion.com/0.2.0/leap.min.js"></script>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+	    <button onclick="controller.connect()">Count Fingers ( Connect Controller )</button>
+	</body>
+	<script>
+
+	    var canvas = document.getElementById( 'canvas' );
+	    var c =  canvas.getContext( '2d' );
+
+	    var width = canvas.width;
+    	var height = canvas.height;
+
+	    var controller = new Leap.Controller();
+
+	    controller.on( 'frame' , function( frame ) {
+	    	c.clearRect(0, 0, width, height);
+		    var numberOfFingers = frame.fingers.length;
+		    //console.log(numberOfFingers)
+	    	c.font = "30px Arial";
+		    c.fillText( numberOfFingers , width/2 , height/2 );
+	   	});
+
+
+	</script>
+</html>
