@@ -11,4 +11,5 @@ in the app folder
 ```cd frontend```
 
 run gulp to compile files and start local server
-```gulp```
+``` gulp ```
+
