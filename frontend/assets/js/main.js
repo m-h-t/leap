@@ -1,0 +1,1 @@
+!function(){"use-strict";window.onload=function(){var a=document.getElementById("content");React.renderComponent(ProductViewer(null),a)}}();
