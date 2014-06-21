@@ -38,7 +38,6 @@ gulp.task('react', function () {
         .pipe(plumber())
         .pipe(include({extensions: 'jsx'}))
         .pipe(react())
-        .pipe(uglify())
         .pipe(gulp.dest('./assets/js'))
         .pipe(connect.reload());
 });

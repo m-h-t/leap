@@ -1,4 +1,6 @@
-//product viewer
+// the product viewer stores the global state of the app
+// and handles events
+
 var ProductViewer = React.createClass({
 	getInitialState: function () {
 		return {
@@ -9,6 +11,11 @@ var ProductViewer = React.createClass({
 	componentDidMount: function () {
 		// listner to leap events goes here
 		// call this.switchPath(delta) to move element
+
+		//example:
+		window.addEventListener('click',function(){
+			this.switchPath(200);
+		}.bind(this),false);
 	},
 
 	handleWheel: function (e) {

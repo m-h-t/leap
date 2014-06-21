@@ -1,4 +1,7 @@
-//product viewer
+// the composed view contains
+// all UI elements 
+// and represents one "path"
+
 var ComposedView = React.createClass({
 	
 	render: function() {
