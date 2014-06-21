@@ -6,6 +6,11 @@ var ProductViewer = React.createClass({
 		};
 	},
 
+	componentDidMount: function () {
+		// listner to leap events goes here
+		// call this.switchPath(delta) to move element
+	},
+
 	handleWheel: function (e) {
 		e.preventDefault();
 		// we write directly to state because it does not affect the DOM
