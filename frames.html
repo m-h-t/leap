@@ -5,27 +5,62 @@
 	    <script src="//js.leapmotion.com/0.2.0/leap.min.js"></script>
 	</head>
 	<body>
-		<canvas id="canvas"></canvas>
-	    <button onclick="controller.connect()">Count Fingers ( Connect Controller )</button>
+		<a href="howToConnect.html" id="link"><div>Link</div></a>
 	</body>
 	<script>
+	
+	var controller = new Leap.Controller();
 
-	    var canvas = document.getElementById( 'canvas' );
-	    var c =  canvas.getContext( '2d' );
+    controller.on( 'frame' , function( data ){
+        frame = data;
 
-	    var width = canvas.width;
-    	var height = canvas.height;
+        var vector = frame.translation(controller.frame(60));
+        //console.log(vector[0]);
+        if (vector[0] < 10 || vector[0] < -10){
 
-	    var controller = new Leap.Controller();
+        if (vector[2] > 100){
+        	console.log("vorne");
+        } else if (vector[2] > -100) {
+        	console.log("hinten");
+        }
+    }
 
-	    controller.on( 'frame' , function( frame ) {
-	    	c.clearRect(0, 0, width, height);
-		    var numberOfFingers = frame.fingers.length;
-		    //console.log(numberOfFingers)
-	    	c.font = "30px Arial";
-		    c.fillText( numberOfFingers , width/2 , height/2 );
-	   	});
+        for( var i =  0; i < frame.gestures.length; i++){
+    	var gesture  = frame.gestures[0];
+    	var type = gesture.type;
+    	console.log(frame.currentFrameRate);
 
+	    switch( type ){
+
+	      case "circle":
+	      	console.log("Circle erkannt");
+	        onCircle(gesture);
+	        break;
+
+	      case "swipe":
+	      	console.log("swipe erkannt");
+	        //onSwipe(gesture);
+	        break;
+
+	      case "screenTap":
+	      	console.log("screenTap erkannt");
+	        //onScreenTap(gesture);
+	        break;
+
+	      case "keyTap":
+	      	console.log("keyTap erkannt");
+	        //onKeyTap(gesture);
+	        break;
+
+	    }
+    }
+    });
+
+    controller.connect();
+
+    function onCircle(gesture){
+    	document.getElementById("link").click();
+    }
 
 	</script>
 </html>
