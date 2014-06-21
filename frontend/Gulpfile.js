@@ -2,7 +2,7 @@
 var gulp    = require('gulp'),
     connect = require('gulp-connect'),
     open    = require('gulp-open');
-    stylus  = require('gulp-sass'),
+    sass  = require('gulp-sass'),
     plumber = require('gulp-plumber'),
     include = require('gulp-include'),
     react   = require('gulp-react'),
@@ -35,6 +35,7 @@ gulp.task('open',function() {
 // React task
 gulp.task('react', function () {
     gulp.src('./app/jsx/main.jsx')
+        .pipe(plumber())
         .pipe(include({extensions: 'jsx'}))
         .pipe(react())
         .pipe(uglify())
@@ -46,10 +47,7 @@ gulp.task('react', function () {
 gulp.task('sass', function () {
     gulp.src('./app/sass/*.scss')
         .pipe(plumber())
-        .pipe(stylus({
-            use: ['nib'], 
-            set: ['compress']
-        }))
+        .pipe(sass())
         .pipe(gulp.dest('./assets/css'))
         .pipe(connect.reload());
 });
