@@ -2,6 +2,7 @@
 
 the final app is in frontend/
 
+add listener for leap events in: frontend/app/jsx/components/ProductViewer.jsx
 ## setup app with gulp
 All in terminal:
 
