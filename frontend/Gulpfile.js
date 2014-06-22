@@ -1,12 +1,13 @@
 // Load Gulp and your plugins
-var gulp    = require('gulp'),
-    connect = require('gulp-connect'),
-    open    = require('gulp-open');
-    sass  = require('gulp-sass'),
-    plumber = require('gulp-plumber'),
-    include = require('gulp-include'),
-    react   = require('gulp-react'),
-    uglify  = require('gulp-uglifyjs');
+var gulp      = require('gulp'),
+    connect   = require('gulp-connect'),
+    open      = require('gulp-open');
+    sass      = require('gulp-sass'),
+    minifyCSS = require('gulp-minify-css')
+    plumber   = require('gulp-plumber'),
+    include   = require('gulp-include'),
+    react     = require('gulp-react'),
+    uglify    = require('gulp-uglifyjs');
 
 var paths = {
     styles: 'app/sass/**/*',
@@ -23,7 +24,7 @@ gulp.task('connect', function() {
 });
 
 // open task
-gulp.task('open',function() {
+gulp.task('open-html',function() {
     var options = {
         url: "http://localhost:5000",
         app: "Google Chrome Canary"
@@ -32,23 +33,41 @@ gulp.task('open',function() {
       .pipe(open('', options));
 })
 
-// React task
-gulp.task('react', function () {
-    gulp.src('./app/jsx/main.jsx')
+// React tasks
+var precompileReact = function () {
+    var stream = gulp.src('./app/jsx/main.jsx')
         .pipe(plumber())
         .pipe(include({extensions: 'jsx'}))
-        .pipe(react())
+        .pipe(react());
+    return stream;
+};
+gulp.task('react', function () {
+    precompileReact()
         .pipe(gulp.dest('./assets/js'))
         .pipe(connect.reload());
 });
+gulp.task('react-uglify', function () {
+    precompileReact()
+        .pipe(uglify())
+        .pipe(gulp.dest('./assets/js'))
+});
 
 // Stylus task
-gulp.task('sass', function () {
-    gulp.src('./app/sass/*.scss')
+var precompileSass = function () {
+    var stream = gulp.src('./app/sass/*.scss')
         .pipe(plumber())
         .pipe(sass())
+    return stream;
+}
+gulp.task('sass', function () {
+   precompileSass()
         .pipe(gulp.dest('./assets/css'))
         .pipe(connect.reload());
+});
+gulp.task('sass-minify', function () {
+   precompileSass()
+        .pipe(minifyCSS())
+        .pipe(gulp.dest('./assets/css'))
 });
 
 // Watch task
@@ -59,3 +78,9 @@ gulp.task('watch', function () {
 
 // Set default task
 gulp.task('default', ['connect', 'sass', 'react', 'watch']);
+
+// task that also opens the page
+gulp.task('open', ['connect', 'open-html', 'sass', 'react', 'watch']);
+
+// task that minifies the code
+gulp.task('production', ['sass-minify', 'react-uglify']);

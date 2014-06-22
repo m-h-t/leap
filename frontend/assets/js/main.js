@@ -63,7 +63,7 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 			onWheel:  this.handleWheel}, 
 				ComposedView( 
 					{ref:  "pathIdentifier",
-					pathName:  "path Name"} )
+					pathName:  "placeholder Name test"} )
 			)
 		);
 	}
