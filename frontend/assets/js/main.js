@@ -102,42 +102,52 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 		var tmpPast = this.state.past;
 		var tmpFuture = this.state.future;
 
-		// remove elements from past
-		var howMany = tmpPast.length - index;
-		var removedFromHistory = tmpPast.splice(index,howMany);
+		// when index is negative go back as many index * -1 steps
+		if (index < 0) index = tmpPast.length + index;
 
-		// add all removed items except the goToItem to future
-		// also add the old current item to the future
-		var goToItem = removedFromHistory.shift();
-		removedFromHistory.push(this.state.current);
-		tmpFuture = removedFromHistory.concat(tmpFuture);
+		if (index >= 0 && index < tmpPast.length) {
+			// remove elements from past
+			var howMany = tmpPast.length - index;
+			var removedFromHistory = tmpPast.splice(index,howMany);
 
-		this.setState({
-			current: goToItem,
-			past: tmpPast,
-			future: tmpFuture
-		});
+			// add all removed items except the goToItem to future
+			// also add the old current item to the future
+			var goToItem = removedFromHistory.shift();
+			removedFromHistory.push(this.state.current);
+			tmpFuture = removedFromHistory.concat(tmpFuture);
+
+			this.setState({
+				current: goToItem,
+				past: tmpPast,
+				future: tmpFuture
+			});
+		}
 	},
 
-	gotToFuture: function (index) {
+	goToFuture: function (index) {
 		var tmpPast = this.state.past;
 		var tmpFuture = this.state.future;
 
-		// remove elements from future
-		var howMany = tmpFuture.length - index;
-		var newFuture = tmpFuture.splice(index,howMany);
-		// also remove goToItem from newFuture
-		var goToItem = newFuture.shift();
+		// when index is negative go forward index * -1 steps
+		if (index < 0) index = (index * -1) -1;
 
-		// add current Item and the items removed from future to past
-		tmpPast.push(this.state.current);
-		tmpPast = tmpPast.concat(tmpFuture);
+		if (index >= 0 && index < tmpFuture.length) {
+			// remove elements from future
+			var howMany = tmpFuture.length - index;
+			var newFuture = tmpFuture.splice(index,howMany);
+			// also remove goToItem from newFuture
+			var goToItem = newFuture.shift();
 
-		this.setState({
-			current: goToItem,
-			future: newFuture,
-			past: tmpPast
-		});
+			// add current Item and the items removed from future to past
+			tmpPast.push(this.state.current);
+			tmpPast = tmpPast.concat(tmpFuture);
+
+			this.setState({
+				current: goToItem,
+				future: newFuture,
+				past: tmpPast
+			});
+		}
 	},
 	
 	render: function() {
@@ -152,12 +162,13 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 					ChildList( 
 						{items:  item.children, 
 						goToItem:  this.goToItem}),
+					item.name, " ", React.DOM.br(null),
 					React.DOM.img( {src:'../data/bike/' + item.image} )
 				),
 
 				HistoryList(
 					{items:  this.state.future, 
-					goToItem:  this.gotToFuture})
+					goToItem:  this.goToFuture})
 		);
 	}
 });
@@ -193,7 +204,7 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 	getInitialState: function () {
 		return {
 			paths: [this.props.data.id],
-			currentPath: 0,
+			currentPathId: 0,
 			scrolled: 0
 		};
 	},
@@ -203,8 +214,16 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 		// call this.switchPath(delta) to move element
 
 		//example:
-		window.addEventListener('click',function(){
-			this.switchPath(200);
+		window.addEventListener('keydown',function(e){
+			var ref = 'path' + this.state.currentPathId;
+			var currentPath = this.refs[ref];
+
+			if(e.keyIdentifier == 'Down') {
+				currentPath.goToPast(-1);
+			} else if (e.keyIdentifier == 'Up') {
+				currentPath.goToFuture(-1);
+			}
+
 		}.bind(this),false);
 	},
 
@@ -218,7 +237,7 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 
 	switchPath: function (delta) {
 		//move view left or right based on delta
-		var ref = 'path' + this.state.currentPath;
+		var ref = 'path' + this.state.currentPathId;
 		var viewNode = this.refs[ref].getDOMNode();
 		viewNode.style.transform = 'translateX('+delta+'px)';
 
@@ -227,14 +246,14 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 	},
 
 	render: function() {
-		var pathName = this.state.paths[this.state.currentPath];
+		var pathName = this.state.paths[this.state.currentPathId];
 
 		return (
 			React.DOM.div( 
 			{className:  "product-viewer",
 			onWheel:  this.handleWheel}, 
 				ComposedView( 
-					{ref:  'path' + this.state.currentPath,
+					{ref:  'path' + this.state.currentPathId,
 					data:  this.props.data} )
 			)
 		);

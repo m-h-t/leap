@@ -31,42 +31,52 @@ var ComposedView = React.createClass({
 		var tmpPast = this.state.past;
 		var tmpFuture = this.state.future;
 
-		// remove elements from past
-		var howMany = tmpPast.length - index;
-		var removedFromHistory = tmpPast.splice(index,howMany);
+		// when index is negative go back as many index * -1 steps
+		if (index < 0) index = tmpPast.length + index;
 
-		// add all removed items except the goToItem to future
-		// also add the old current item to the future
-		var goToItem = removedFromHistory.shift();
-		removedFromHistory.push(this.state.current);
-		tmpFuture = removedFromHistory.concat(tmpFuture);
+		if (index >= 0 && index < tmpPast.length) {
+			// remove elements from past
+			var howMany = tmpPast.length - index;
+			var removedFromHistory = tmpPast.splice(index,howMany);
 
-		this.setState({
-			current: goToItem,
-			past: tmpPast,
-			future: tmpFuture
-		});
+			// add all removed items except the goToItem to future
+			// also add the old current item to the future
+			var goToItem = removedFromHistory.shift();
+			removedFromHistory.push(this.state.current);
+			tmpFuture = removedFromHistory.concat(tmpFuture);
+
+			this.setState({
+				current: goToItem,
+				past: tmpPast,
+				future: tmpFuture
+			});
+		}
 	},
 
-	gotToFuture: function (index) {
+	goToFuture: function (index) {
 		var tmpPast = this.state.past;
 		var tmpFuture = this.state.future;
 
-		// remove elements from future
-		var howMany = tmpFuture.length - index;
-		var newFuture = tmpFuture.splice(index,howMany);
-		// also remove goToItem from newFuture
-		var goToItem = newFuture.shift();
+		// when index is negative go forward index * -1 steps
+		if (index < 0) index = (index * -1) -1;
 
-		// add current Item and the items removed from future to past
-		tmpPast.push(this.state.current);
-		tmpPast = tmpPast.concat(tmpFuture);
+		if (index >= 0 && index < tmpFuture.length) {
+			// remove elements from future
+			var howMany = tmpFuture.length - index;
+			var newFuture = tmpFuture.splice(index,howMany);
+			// also remove goToItem from newFuture
+			var goToItem = newFuture.shift();
 
-		this.setState({
-			current: goToItem,
-			future: newFuture,
-			past: tmpPast
-		});
+			// add current Item and the items removed from future to past
+			tmpPast.push(this.state.current);
+			tmpPast = tmpPast.concat(tmpFuture);
+
+			this.setState({
+				current: goToItem,
+				future: newFuture,
+				past: tmpPast
+			});
+		}
 	},
 	
 	render: function() {
@@ -81,12 +91,13 @@ var ComposedView = React.createClass({
 					<ChildList 
 						items = {item.children} 
 						goToItem = {this.goToItem}/>
+					{item.name} <br/>
 					<img src={'../data/bike/' + item.image} />
 				</div>
 
 				<HistoryList
 					items = {this.state.future} 
-					goToItem = {this.gotToFuture}/>
+					goToItem = {this.goToFuture}/>
 		</div>;
 	}
 });

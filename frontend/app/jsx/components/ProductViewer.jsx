@@ -5,7 +5,7 @@ var ProductViewer = React.createClass({
 	getInitialState: function () {
 		return {
 			paths: [this.props.data.id],
-			currentPath: 0,
+			currentPathId: 0,
 			scrolled: 0
 		};
 	},
@@ -15,8 +15,16 @@ var ProductViewer = React.createClass({
 		// call this.switchPath(delta) to move element
 
 		//example:
-		window.addEventListener('click',function(){
-			this.switchPath(200);
+		window.addEventListener('keydown',function(e){
+			var ref = 'path' + this.state.currentPathId;
+			var currentPath = this.refs[ref];
+
+			if(e.keyIdentifier == 'Down') {
+				currentPath.goToPast(-1);
+			} else if (e.keyIdentifier == 'Up') {
+				currentPath.goToFuture(-1);
+			}
+
 		}.bind(this),false);
 	},
 
@@ -30,7 +38,7 @@ var ProductViewer = React.createClass({
 
 	switchPath: function (delta) {
 		//move view left or right based on delta
-		var ref = 'path' + this.state.currentPath;
+		var ref = 'path' + this.state.currentPathId;
 		var viewNode = this.refs[ref].getDOMNode();
 		viewNode.style.transform = 'translateX('+delta+'px)';
 
@@ -39,14 +47,14 @@ var ProductViewer = React.createClass({
 	},
 
 	render: function() {
-		var pathName = this.state.paths[this.state.currentPath];
+		var pathName = this.state.paths[this.state.currentPathId];
 
 		return (
 			<div 
 			className = "product-viewer"
 			onWheel = {this.handleWheel}>
 				<ComposedView 
-					ref = {'path' + this.state.currentPath}
+					ref = {'path' + this.state.currentPathId}
 					data = {this.props.data} />
 			</div>
 		);
