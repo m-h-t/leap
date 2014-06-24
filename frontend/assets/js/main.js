@@ -2,6 +2,44 @@
 
 (function () {
 	"use-strict";
+function DataSet(path) {
+	var xhttp = new XMLHttpRequest();
+
+	xhttp.open("GET", path, false);
+	xhttp.send();
+	var xmlDoc = xhttp.responseXML;
+
+	// var oSerializer = new XMLSerializer();
+	// var sXML = oSerializer.serializeToString(xmlDoc);
+	// console.log(xmlDoc);
+
+	var x2js = new X2JS();
+
+	var json = x2js.xml2json( xmlDoc );
+	var beatifulObj = beautitfyJson(json.VGraph.N);
+	
+	return beatifulObj;
+}
+
+function beautitfyJson (json) {
+	var beatifulObj = {};
+ 	var values = json.Data.Attr;
+
+ 	for (var i = 0; i < values.length; i++) {
+ 		beatifulObj[values[i].Key] = values[i].Value;
+ 	}
+
+ 	var children = json.N;
+ 	if (children) {
+ 		beatifulObj.children = [];	
+ 		for (var i = 0; i < json.N.length; i++) {
+ 			beatifulObj.children[i] = beautitfyJson(children[i]);
+ 		};
+ 	}
+
+ 	return beatifulObj;
+}
+
 
 //mixins
 
@@ -70,9 +108,12 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 });
 
 
+	//get bike data from xml
+	var bike = new DataSet('../data/bike/E-Bike_v4.xml');
+
 	//add react component to DOM
 	window.onload = function () {
 		var contentFrame = document.getElementById('content');
-		React.renderComponent(ProductViewer(null ), contentFrame);
+		React.renderComponent(ProductViewer( {data:  bike} ), contentFrame);
 	};
 })();

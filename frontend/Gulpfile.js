@@ -11,7 +11,7 @@ var gulp      = require('gulp'),
 
 var paths = {
     styles: 'app/sass/**/*',
-    react:  'app/jsx/**/*.jsx'
+    react:  'app/jsx/**/*'
 };
 
 // Connect task
@@ -37,7 +37,7 @@ gulp.task('open-html',function() {
 var precompileReact = function () {
     var stream = gulp.src('./app/jsx/main.jsx')
         .pipe(plumber())
-        .pipe(include({extensions: 'jsx'}))
+        .pipe(include({extensions: ['jsx','js']}))
         .pipe(react());
     return stream;
 };
