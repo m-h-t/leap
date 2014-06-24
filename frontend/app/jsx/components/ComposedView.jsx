@@ -8,9 +8,21 @@ var ComposedView = React.createClass({
 	getInitialState: function () {
 		return {
 			past: [],
-			current: this.props.data,
-			future: []
+			current: {},
+			future: [],
 		};
+	},
+
+	componentWillMount: function () {
+		var initialFuture = [];
+		if (this.props.data.children) {
+			initialFuture.push(this.props.data.children[0]);
+		}
+
+		this.setState({
+			current: this.props.data,
+			future: initialFuture
+		});
 	},
 
 	goToItem: function (item) {
@@ -18,12 +30,17 @@ var ComposedView = React.createClass({
 		// add current item to past
 		// and clear future
 		var tmpPast = this.state.past;
-		tmpPast.push(this.state.current); 
+		var newFuture = [];
+
+		tmpPast.push(this.state.current);
+		if (item.children) {
+			newFuture.push(item.children[0]);
+		}
 
 		this.setState({
 			current: item,
 			past: tmpPast,
-			future: []
+			future: newFuture
 		});
 	},
 
@@ -67,6 +84,10 @@ var ComposedView = React.createClass({
 			// also remove goToItem from newFuture
 			var goToItem = newFuture.shift();
 
+			if (newFuture.length === 0 && goToItem.children) {
+				newFuture.push(goToItem.children[0]);
+			}
+
 			// add current Item and the items removed from future to past
 			tmpPast.push(this.state.current);
 			tmpPast = tmpPast.concat(tmpFuture);
@@ -78,9 +99,31 @@ var ComposedView = React.createClass({
 			});
 		}
 	},
+
+	changeFuture: function (step) {
+		var currentFuture = this.state.future[0];
+		var newFutureIndex = this.state.current.children.indexOf(currentFuture) + step;
+		var childrenSize = this.state.current.children.length - 1;
+
+		if (newFutureIndex < 0) newFutureIndex = childrenSize;
+		if (newFutureIndex > childrenSize) newFutureIndex = 0;
+
+		var newFuture = [];
+		newFuture[0] = this.state.current.children[newFutureIndex];
+
+		this.setState({
+			future: newFuture
+		});
+	},
 	
 	render: function() {
 		var item = this.state.current;
+		var currentFuture = this.state.future[0];
+		var currentFutureIndex = 0;
+		if (this.state.current.children) {
+			currentFutureIndex = this.state.current.children.indexOf(currentFuture);
+		}
+
 		return <div 
 			className = "composed-view">
 				<HistoryList
@@ -90,6 +133,7 @@ var ComposedView = React.createClass({
 				<div className = "view-center">
 					<ChildList 
 						items = {item.children} 
+						currentFutureIndex = {currentFutureIndex}
 						goToItem = {this.goToItem}/>
 					{item.name} <br/>
 					<img src={'../data/bike/' + item.image} />

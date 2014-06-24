@@ -19,10 +19,14 @@ var ProductViewer = React.createClass({
 			var ref = 'path' + this.state.currentPathId;
 			var currentPath = this.refs[ref];
 
-			if(e.keyIdentifier == 'Down') {
+			if(e.keyIdentifier == 'Up') {
 				currentPath.goToPast(-1);
-			} else if (e.keyIdentifier == 'Up') {
+			} else if (e.keyIdentifier == 'Down') {
 				currentPath.goToFuture(-1);
+			} else if (e.keyIdentifier == 'Right') {
+				currentPath.changeFuture(1);
+			} else if (e.keyIdentifier == 'Left') {
+				currentPath.changeFuture(-1);
 			}
 
 		}.bind(this),false);

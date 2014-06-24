@@ -17,7 +17,6 @@ function DataSet(path) {
 
 	var json = x2js.xml2json( xmlDoc );
 	var beatifulObj = beautitfyJson(json.VGraph.N);
-	
 	return beatifulObj;
 }
 
@@ -30,9 +29,15 @@ function beautitfyJson (json) {
  	}
 
  	var children = json.N;
- 	if (children) {
+ 	if (children && children.Data) {
+ 		// only one child -> obj
+ 		beatifulObj.children = [];
+ 		beatifulObj.children[0] = beautitfyJson(children);
+
+ 	} else if (children) {
+ 		// many children -> array
  		beatifulObj.children = [];	
- 		for (var i = 0; i < json.N.length; i++) {
+ 		for (var i = 0; i < children.length; i++) {
  			beatifulObj.children[i] = beautitfyJson(children[i]);
  		};
  	}
@@ -53,9 +58,16 @@ var ChildList = React.createClass({displayName: 'ChildList',
 	render: function() {	
 		var Items = {}; 
 		if (this.props.items) {
+			var cx = React.addons.classSet;
+
 			Items = this.props.items.map(function(item, i) {
+				var classes = cx({
+				  'child-item': true,
+				  'is-current-future': this.props.currentFutureIndex == i,
+				});
+
 				return React.DOM.li( 
-					{className:  "child-item",
+					{className:  classes,
 					key:  item.id + i,
 					onClick:  function(){this.props.goToItem(item);}.bind(this)}, 
 						item.name,
@@ -79,9 +91,21 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 	getInitialState: function () {
 		return {
 			past: [],
-			current: this.props.data,
-			future: []
+			current: {},
+			future: [],
 		};
+	},
+
+	componentWillMount: function () {
+		var initialFuture = [];
+		if (this.props.data.children) {
+			initialFuture.push(this.props.data.children[0]);
+		}
+
+		this.setState({
+			current: this.props.data,
+			future: initialFuture
+		});
 	},
 
 	goToItem: function (item) {
@@ -89,12 +113,17 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 		// add current item to past
 		// and clear future
 		var tmpPast = this.state.past;
-		tmpPast.push(this.state.current); 
+		var newFuture = [];
+
+		tmpPast.push(this.state.current);
+		if (item.children) {
+			newFuture.push(item.children[0]);
+		}
 
 		this.setState({
 			current: item,
 			past: tmpPast,
-			future: []
+			future: newFuture
 		});
 	},
 
@@ -138,6 +167,10 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 			// also remove goToItem from newFuture
 			var goToItem = newFuture.shift();
 
+			if (newFuture.length === 0 && goToItem.children) {
+				newFuture.push(goToItem.children[0]);
+			}
+
 			// add current Item and the items removed from future to past
 			tmpPast.push(this.state.current);
 			tmpPast = tmpPast.concat(tmpFuture);
@@ -149,9 +182,31 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 			});
 		}
 	},
+
+	changeFuture: function (step) {
+		var currentFuture = this.state.future[0];
+		var newFutureIndex = this.state.current.children.indexOf(currentFuture) + step;
+		var childrenSize = this.state.current.children.length - 1;
+
+		if (newFutureIndex < 0) newFutureIndex = childrenSize;
+		if (newFutureIndex > childrenSize) newFutureIndex = 0;
+
+		var newFuture = [];
+		newFuture[0] = this.state.current.children[newFutureIndex];
+
+		this.setState({
+			future: newFuture
+		});
+	},
 	
 	render: function() {
 		var item = this.state.current;
+		var currentFuture = this.state.future[0];
+		var currentFutureIndex = 0;
+		if (this.state.current.children) {
+			currentFutureIndex = this.state.current.children.indexOf(currentFuture);
+		}
+
 		return React.DOM.div( 
 			{className:  "composed-view"}, 
 				HistoryList(
@@ -161,6 +216,7 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 				React.DOM.div( {className:  "view-center"}, 
 					ChildList( 
 						{items:  item.children, 
+						currentFutureIndex:  currentFutureIndex,
 						goToItem:  this.goToItem}),
 					item.name, " ", React.DOM.br(null),
 					React.DOM.img( {src:'../data/bike/' + item.image} )
@@ -218,10 +274,14 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 			var ref = 'path' + this.state.currentPathId;
 			var currentPath = this.refs[ref];
 
-			if(e.keyIdentifier == 'Down') {
+			if(e.keyIdentifier == 'Up') {
 				currentPath.goToPast(-1);
-			} else if (e.keyIdentifier == 'Up') {
+			} else if (e.keyIdentifier == 'Down') {
 				currentPath.goToFuture(-1);
+			} else if (e.keyIdentifier == 'Right') {
+				currentPath.changeFuture(1);
+			} else if (e.keyIdentifier == 'Left') {
+				currentPath.changeFuture(-1);
 			}
 
 		}.bind(this),false);

@@ -19,6 +19,9 @@
 	white-space: normal;
 	margin-right: 5px;
 	overflow: hidden;
+	&.is-current-future {
+		background-color: red;
+	}
 
 	.child-image {
 		width: 100%;
