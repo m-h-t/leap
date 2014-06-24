@@ -51,12 +51,18 @@ function beautitfyJson (json) {
 var ChildList = React.createClass({displayName: 'ChildList',
 	
 	render: function() {	
-		var Items = this.props.items.map(function(item) {
-			return React.DOM.li( {className:"child-item"}, 
-				item.name,
-				React.DOM.img( {className:"child-image", src:'../data/bike/' + item.image} )
-			);
-		});
+		var Items = {}; 
+		if (this.props.items) {
+			Items = this.props.items.map(function(item, i) {
+				return React.DOM.li( 
+					{className:  "child-item",
+					key:  item.id + i,
+					onClick:  function(){this.props.goToItem(item);}.bind(this)}, 
+						item.name,
+						React.DOM.img( {className:"child-image", src:'../data/bike/' + item.image} )
+				);
+			},this);
+		}
 
 		return React.DOM.ul( {className:"child-list"}, 
 			Items
@@ -66,6 +72,8 @@ var ChildList = React.createClass({displayName: 'ChildList',
 // the composed view contains
 // all UI elements 
 // and represents one "path"
+// stores current state in path
+// and manages "walking in the path"
 
 var ComposedView = React.createClass({displayName: 'ComposedView',
 	getInitialState: function () {
@@ -75,14 +83,106 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 			future: []
 		};
 	},
+
+	goToItem: function (item) {
+		// go to specified item
+		// add current item to past
+		// and clear future
+		var tmpPast = this.state.past;
+		tmpPast.push(this.state.current); 
+
+		this.setState({
+			current: item,
+			past: tmpPast,
+			future: []
+		});
+	},
+
+	goToPast: function (index) {
+		var tmpPast = this.state.past;
+		var tmpFuture = this.state.future;
+
+		// remove elements from past
+		var howMany = tmpPast.length - index;
+		var removedFromHistory = tmpPast.splice(index,howMany);
+
+		// add all removed items except the goToItem to future
+		// also add the old current item to the future
+		var goToItem = removedFromHistory.shift();
+		removedFromHistory.push(this.state.current);
+		tmpFuture = removedFromHistory.concat(tmpFuture);
+
+		this.setState({
+			current: goToItem,
+			past: tmpPast,
+			future: tmpFuture
+		});
+	},
+
+	gotToFuture: function (index) {
+		var tmpPast = this.state.past;
+		var tmpFuture = this.state.future;
+
+		// remove elements from future
+		var howMany = tmpFuture.length - index;
+		var newFuture = tmpFuture.splice(index,howMany);
+		// also remove goToItem from newFuture
+		var goToItem = newFuture.shift();
+
+		// add current Item and the items removed from future to past
+		tmpPast.push(this.state.current);
+		tmpPast = tmpPast.concat(tmpFuture);
+
+		this.setState({
+			current: goToItem,
+			future: newFuture,
+			past: tmpPast
+		});
+	},
 	
 	render: function() {
 		var item = this.state.current;
 		return React.DOM.div( 
 			{className:  "composed-view"}, 
-				item.name,
-				ChildList( {items:item.children} ),
-				React.DOM.img( {src:'../data/bike/' + item.image} )
+				HistoryList(
+					{items:  this.state.past, 
+					goToItem:  this.goToPast}),
+
+				React.DOM.div( {className:  "view-center"}, 
+					ChildList( 
+						{items:  item.children, 
+						goToItem:  this.goToItem}),
+					React.DOM.img( {src:'../data/bike/' + item.image} )
+				),
+
+				HistoryList(
+					{items:  this.state.future, 
+					goToItem:  this.gotToFuture})
+		);
+	}
+});
+// the composed view contains
+// all UI elements 
+// and represents one "path"
+
+var HistoryList = React.createClass({displayName: 'HistoryList',
+	
+	render: function() {	
+		var Items = {}; 
+		if (this.props.items) {
+			Items = this.props.items.map(function(item, i) {
+				return React.DOM.li( 
+					{className:  "history-item",
+					key:  item.id + i,
+					onClick:  function(){this.props.goToItem(i);}.bind(this)}, 
+						item.name,
+						React.DOM.img( {className:"history-image", src:'../data/bike/' + item.image} )
+				);
+			},this);
+		}
+
+		return React.DOM.ul( {className:"history-list"}, 
+			Items
 		);
 	}
 });

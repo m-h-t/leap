@@ -2,23 +2,23 @@
 // all UI elements 
 // and represents one "path"
 
-var ChildList = React.createClass({
+var HistoryList = React.createClass({
 	
 	render: function() {	
 		var Items = {}; 
 		if (this.props.items) {
 			Items = this.props.items.map(function(item, i) {
 				return <li 
-					className = "child-item"
+					className = "history-item"
 					key = {item.id + i}
-					onClick = {function(){this.props.goToItem(item);}.bind(this)}>
+					onClick = {function(){this.props.goToItem(i);}.bind(this)}>
 						{item.name}
-						<img className="child-image" src={'../data/bike/' + item.image} />
+						<img className="history-image" src={'../data/bike/' + item.image} />
 				</li>;
 			},this);
 		}
 
-		return <ul className="child-list">
+		return <ul className="history-list">
 			{Items}
 		</ul>;
 	}
