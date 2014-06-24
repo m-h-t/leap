@@ -4,6 +4,8 @@
 var ProductViewer = React.createClass({
 	getInitialState: function () {
 		return {
+			paths: [this.props.data.id],
+			currentPath: 0,
 			scrolled: 0
 		};
 	},
@@ -28,7 +30,8 @@ var ProductViewer = React.createClass({
 
 	switchPath: function (delta) {
 		//move view left or right based on delta
-		var viewNode = this.refs.pathIdentifier.getDOMNode();
+		var ref = 'path' + this.state.currentPath;
+		var viewNode = this.refs[ref].getDOMNode();
 		viewNode.style.transform = 'translateX('+delta+'px)';
 
 		//TODO: switch path when delta is greater than 100
@@ -36,13 +39,15 @@ var ProductViewer = React.createClass({
 	},
 
 	render: function() {
+		var pathName = this.state.paths[this.state.currentPath];
+
 		return (
 			<div 
 			className = "product-viewer"
 			onWheel = {this.handleWheel}>
 				<ComposedView 
-					ref = "pathIdentifier"
-					pathName = "placeholder Name test" />
+					ref = {'path' + this.state.currentPath}
+					data = {this.props.data} />
 			</div>
 		);
 	}

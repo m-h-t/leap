@@ -48,12 +48,41 @@ function beautitfyJson (json) {
 // all UI elements 
 // and represents one "path"
 
+var ChildList = React.createClass({displayName: 'ChildList',
+	
+	render: function() {	
+		var Items = this.props.items.map(function(item) {
+			return React.DOM.li( {className:"child-item"}, 
+				item.name,
+				React.DOM.img( {className:"child-image", src:'../data/bike/' + item.image} )
+			);
+		});
+
+		return React.DOM.ul( {className:"child-list"}, 
+			Items
+		);
+	}
+});
+// the composed view contains
+// all UI elements 
+// and represents one "path"
+
 var ComposedView = React.createClass({displayName: 'ComposedView',
+	getInitialState: function () {
+		return {
+			past: [],
+			current: this.props.data,
+			future: []
+		};
+	},
 	
 	render: function() {
+		var item = this.state.current;
 		return React.DOM.div( 
 			{className:  "composed-view"}, 
-			this.props.pathName
+				item.name,
+				ChildList( {items:item.children} ),
+				React.DOM.img( {src:'../data/bike/' + item.image} )
 		);
 	}
 });
@@ -63,6 +92,8 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 var ProductViewer = React.createClass({displayName: 'ProductViewer',
 	getInitialState: function () {
 		return {
+			paths: [this.props.data.id],
+			currentPath: 0,
 			scrolled: 0
 		};
 	},
@@ -87,7 +118,8 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 
 	switchPath: function (delta) {
 		//move view left or right based on delta
-		var viewNode = this.refs.pathIdentifier.getDOMNode();
+		var ref = 'path' + this.state.currentPath;
+		var viewNode = this.refs[ref].getDOMNode();
 		viewNode.style.transform = 'translateX('+delta+'px)';
 
 		//TODO: switch path when delta is greater than 100
@@ -95,13 +127,15 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 	},
 
 	render: function() {
+		var pathName = this.state.paths[this.state.currentPath];
+
 		return (
 			React.DOM.div( 
 			{className:  "product-viewer",
 			onWheel:  this.handleWheel}, 
 				ComposedView( 
-					{ref:  "pathIdentifier",
-					pathName:  "placeholder Name test"} )
+					{ref:  'path' + this.state.currentPath,
+					data:  this.props.data} )
 			)
 		);
 	}

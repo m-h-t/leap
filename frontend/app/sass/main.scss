@@ -1,5 +1,16 @@
-.composed-view {
-	background-color: red;
-	width: 200px;
-	height: 200px;
+.child-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.child-item {
+	width: 100px;
+	height: 100px;
+	float: left;
+	margin-right: 5px;
+
+	.child-image {
+		width: 100%;
+		height: auto;
+	}
 }
