@@ -13,7 +13,6 @@ function DataSet(path) {
 
 	var json = x2js.xml2json( xmlDoc );
 	var beatifulObj = beautitfyJson(json.VGraph.N);
-	
 	return beatifulObj;
 }
 
@@ -26,9 +25,15 @@ function beautitfyJson (json) {
  	}
 
  	var children = json.N;
- 	if (children) {
+ 	if (children && children.Data) {
+ 		// only one child -> obj
+ 		beatifulObj.children = [];
+ 		beatifulObj.children[0] = beautitfyJson(children);
+
+ 	} else if (children) {
+ 		// many children -> array
  		beatifulObj.children = [];	
- 		for (var i = 0; i < json.N.length; i++) {
+ 		for (var i = 0; i < children.length; i++) {
  			beatifulObj.children[i] = beautitfyJson(children[i]);
  		};
  	}
