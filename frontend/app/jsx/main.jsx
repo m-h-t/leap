@@ -2,13 +2,17 @@
 
 (function () {
 	"use-strict";
+	//= require DataSet.js
 
 	//= require mixins.jsx
 	//= require_tree /components
 
+	//get bike data from xml
+	var bike = new DataSet('../data/bike/E-Bike_v4.xml');
+
 	//add react component to DOM
 	window.onload = function () {
 		var contentFrame = document.getElementById('content');
-		React.renderComponent(<ProductViewer />, contentFrame);
+		React.renderComponent(<ProductViewer data = {bike} />, contentFrame);
 	};
 })();

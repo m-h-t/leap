@@ -1,17 +1,19 @@
 // Load Gulp and your plugins
-var gulp      = require('gulp'),
-    connect   = require('gulp-connect'),
-    open      = require('gulp-open');
-    sass      = require('gulp-sass'),
-    minifyCSS = require('gulp-minify-css')
-    plumber   = require('gulp-plumber'),
-    include   = require('gulp-include'),
-    react     = require('gulp-react'),
-    uglify    = require('gulp-uglifyjs');
+var gulp           = require('gulp'),
+    connect        = require('gulp-connect'),
+    open           = require('gulp-open');
+    sass           = require('gulp-sass'),
+    minifyCSS      = require('gulp-minify-css')
+    plumber        = require('gulp-plumber'),
+    include        = require('gulp-include'),
+    gulpBowerFiles = require('gulp-bower-files'),
+    concat         = require('gulp-concat'),
+    react          = require('gulp-react'),
+    uglify         = require('gulp-uglifyjs');
 
 var paths = {
     styles: 'app/sass/**/*',
-    react:  'app/jsx/**/*.jsx'
+    react:  'app/jsx/**/*'
 };
 
 // Connect task
@@ -33,11 +35,30 @@ gulp.task('open-html',function() {
       .pipe(open('', options));
 })
 
+// merge bower files
+var mergeBowerFiles = function () {
+    var stream = gulpBowerFiles({paths: {
+        bowerDirectory: './app/bower_components',
+        bowerJson: './app/bower.json'
+    }})
+        .pipe(concat('vendor.js'));
+    return stream;
+}
+gulp.task('bower', function () {
+    mergeBowerFiles()
+    .pipe(gulp.dest('./assets/js'));
+});
+gulp.task('bower-uglify', function () {
+    mergeBowerFiles()
+    .pipe(uglify())
+    .pipe(gulp.dest('./assets/js'));
+});
+
 // React tasks
 var precompileReact = function () {
     var stream = gulp.src('./app/jsx/main.jsx')
         .pipe(plumber())
-        .pipe(include({extensions: 'jsx'}))
+        .pipe(include({extensions: ['jsx','js']}))
         .pipe(react());
     return stream;
 };
@@ -77,10 +98,10 @@ gulp.task('watch', function () {
 });
 
 // Set default task
-gulp.task('default', ['connect', 'sass', 'react', 'watch']);
+gulp.task('default', ['connect', 'sass', 'bower', 'react', 'watch']);
 
 // task that also opens the page
 gulp.task('open', ['connect', 'open-html', 'sass', 'react', 'watch']);
 
 // task that minifies the code
-gulp.task('production', ['sass-minify', 'react-uglify']);
+gulp.task('production', ['sass-minify', 'react-uglify', 'bower-uglify']);
