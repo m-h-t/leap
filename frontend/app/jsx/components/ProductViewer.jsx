@@ -8,14 +8,12 @@ var ProductViewer = React.createClass({
 		};
 	},
 
-	componentDidMount: function () {
+	componentDidMount: function (gesture) {
 		// listner to leap events goes here
 		// call this.switchPath(delta) to move element
 
 		//example:
-		window.addEventListener('click',function(){
-			this.switchPath(200);
-		}.bind(this),false);
+		this.switchPath(gesture.position[2]);
 	},
 
 	handleWheel: function (e) {

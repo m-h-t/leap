@@ -2,59 +2,60 @@
 	<head>
 		<title>Getting Frames</title>
 		<script src="js/leap-0.6.0.js"></script>
-	    <script src="//js.leapmotion.com/0.2.0/leap.min.js"></script>
-	</head>
+		<script src="js/leap-plugins-0.1.6.js"></script>
 	<body>
 		<a href="howToConnect.html" id="link"><div>Link</div></a>
 	</body>
 	<script>
 	
 	var controller = new Leap.Controller();
+	controller.use('screenPosition');
+	var frameArray = new Array();
+	var counter = 0;
 
-    controller.on( 'frame' , function( data ){
-        frame = data;
+	controller.on('frame', function(frame){
+		if (hand = frame.hands[0]) {
+   		// setInterval(function(){
+      		// frameArray[counter] = controller.frame();
+      		// counter++;
+      		console.log(hand.screenPosition()[2]);
+   		// });
+		}
+	});
 
-        var vector = frame.translation(controller.frame(60));
-        //console.log(vector[0]);
-        if (vector[0] < 10 || vector[0] < -10){
+    // controller.on('frame', function( data ){
+    //     frame = data;
 
-        if (vector[2] > 100){
-        	console.log("vorne");
-        } else if (vector[2] > -100) {
-        	console.log("hinten");
-        }
-    }
+	   // for( var i =  0; i < frame.gestures.length; i++){
+	   //  	var gesture  = frame.gestures[0];
+	   //  	var type = gesture.type;
+	   //  	console.log(frame.currentFrameRate);
 
-        for( var i =  0; i < frame.gestures.length; i++){
-    	var gesture  = frame.gestures[0];
-    	var type = gesture.type;
-    	console.log(frame.currentFrameRate);
+		  //   switch( type ){
 
-	    switch( type ){
+		  //     case "circle":
+		  //     	console.log("Circle erkannt");
+		  //       onCircle(gesture);
+		  //       break;
 
-	      case "circle":
-	      	console.log("Circle erkannt");
-	        onCircle(gesture);
-	        break;
+		  //     case "swipe":
+		  //     	console.log("swipe erkannt");
+		  //       //onSwipe(gesture);
+		  //       break;
 
-	      case "swipe":
-	      	console.log("swipe erkannt");
-	        //onSwipe(gesture);
-	        break;
+		  //     case "screenTap":
+		  //     	console.log("screenTap erkannt");
+		  //       //onScreenTap(gesture);
+		  //       break;
 
-	      case "screenTap":
-	      	console.log("screenTap erkannt");
-	        //onScreenTap(gesture);
-	        break;
+		  //     case "keyTap":
+		  //     	console.log("keyTap erkannt");
+		  //       //onKeyTap(gesture);
+		  //       break;
 
-	      case "keyTap":
-	      	console.log("keyTap erkannt");
-	        //onKeyTap(gesture);
-	        break;
-
-	    }
-    }
-    });
+		  //   }
+	   //  }
+    // });
 
     controller.connect();
 
