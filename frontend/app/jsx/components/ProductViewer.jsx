@@ -13,6 +13,39 @@ var ProductViewer = React.createClass({
 	componentDidMount: function () {
 		// listner to leap events goes here
 		// call this.switchPath(delta) to move element
+		leapController.on('frame', function( frame ){
+			var ref = 'path' + this.state.currentPathId;
+			var currentPath = this.refs[ref];
+
+		  	for( var i =  0; i < frame.gestures.length; i++){
+		   		var gesture  = frame.gestures[0];
+		   		var type = gesture.type;
+		   		console.log(frame.currentFrameRate);
+
+			    switch( type ){
+
+				   	case "circle":
+			   	  	console.log("Circle erkannt");
+			   	    currentPath.goToFuture(-1);
+			   	    break;
+
+			   	    case "swipe":
+			      	console.log("swipe erkannt");
+			        currentPath.goToPast(-1);
+			        break;
+
+			      	case "screenTap":
+			      	console.log("screenTap erkannt");
+			        currentPath.changeFuture(1);
+			        break;
+
+			      	case "keyTap":
+			      	console.log("keyTap erkannt");
+			        currentPath.changeFuture(-1);
+			        break;
+			  	}
+			}
+		}.bind(this));
 
 		//example:
 		window.addEventListener('keydown',function(e){

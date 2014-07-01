@@ -268,6 +268,25 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 	componentDidMount: function () {
 		// listner to leap events goes here
 		// call this.switchPath(delta) to move element
+		leapController.on('frame', function( frame ){
+			var ref = 'path' + this.state.currentPathId;
+			var currentPath = this.refs[ref];
+
+		  	for( var i =  0; i < frame.gestures.length; i++){
+		   		var gesture  = frame.gestures[0];
+		   		var type = gesture.type;
+		   		console.log(frame.currentFrameRate);
+
+			    switch( type ){
+
+				   	case "circle":
+
+			   	  	console.log("Circle erkannt");
+			   	    currentPath.goToFuture(-1);
+			   	    break;
+			  	}
+			}
+		}.bind(this));
 
 		//example:
 		window.addEventListener('keydown',function(e){
@@ -323,6 +342,10 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 
 	//get bike data from xml
 	var bike = new DataSet('../data/bike/E-Bike_v4.xml');
+
+	//the leap controller
+	var leapController = new Leap.Controller();
+	leapController.connect();
 
 	//add react component to DOM
 	window.onload = function () {
