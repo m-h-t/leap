@@ -36,7 +36,7 @@ function beautitfyJson (json) {
 
  	} else if (children) {
  		// many children -> array
- 		beatifulObj.children = [];	
+ 		beatifulObj.children = [];
  		for (var i = 0; i < children.length; i++) {
  			beatifulObj.children[i] = beautitfyJson(children[i]);
  		};
@@ -50,13 +50,13 @@ function beautitfyJson (json) {
 
 	//= require_tree /components
 // the composed view contains
-// all UI elements 
+// all UI elements
 // and represents one "path"
 
 var ChildList = React.createClass({displayName: 'ChildList',
-	
-	render: function() {	
-		var Items = {}; 
+
+	render: function() {
+		var Items = {};
 		if (this.props.items) {
 			var cx = React.addons.classSet;
 
@@ -66,23 +66,23 @@ var ChildList = React.createClass({displayName: 'ChildList',
 				  'is-current-future': this.props.currentFutureIndex == i,
 				});
 
-				return React.DOM.li( 
+				return React.DOM.li(
 					{className:  classes,
 					key:  item.id + i,
-					onClick:  function(){this.props.goToItem(item);}.bind(this)}, 
+					onClick:  function(){this.props.goToItem(item);}.bind(this)},
 						item.name,
 						React.DOM.img( {className:"child-image", src:'../data/bike/' + item.image} )
 				);
 			},this);
 		}
 
-		return React.DOM.ul( {className:"child-list"}, 
+		return React.DOM.ul( {className:"child-list"},
 			Items
 		);
 	}
 });
 // the composed view contains
-// all UI elements 
+// all UI elements
 // and represents one "path"
 // stores current state in path
 // and manages "walking in the path"
@@ -198,7 +198,7 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 			future: newFuture
 		});
 	},
-	
+
 	render: function() {
 		var item = this.state.current;
 		var currentFuture = this.state.future[0];
@@ -207,48 +207,49 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 			currentFutureIndex = this.state.current.children.indexOf(currentFuture);
 		}
 
-		return React.DOM.div( 
-			{className:  "composed-view"}, 
+		return React.DOM.div(
+			{className:  "composed-view"},
 				HistoryList(
-					{items:  this.state.past, 
+					{items:  this.state.past,
 					goToItem:  this.goToPast}),
 
-				React.DOM.div( {className:  "view-center"}, 
-					ChildList( 
-						{items:  item.children, 
+				React.DOM.div( {className:  "view-center"},
+					ChildList(
+						{items:  item.children,
 						currentFutureIndex:  currentFutureIndex,
 						goToItem:  this.goToItem}),
-					item.name, " ", React.DOM.br(null),
-					React.DOM.img( {src:'../data/bike/' + item.image} )
+					React.DOM.div( {className: "current-element"},
+						item.name, " ", React.DOM.br(null),
+						React.DOM.img( {src:'../data/bike/' + item.image} ))
 				),
 
 				HistoryList(
-					{items:  this.state.future, 
+					{items:  this.state.future,
 					goToItem:  this.goToFuture})
 		);
 	}
 });
 // the composed view contains
-// all UI elements 
+// all UI elements
 // and represents one "path"
 
 var HistoryList = React.createClass({displayName: 'HistoryList',
-	
-	render: function() {	
-		var Items = {}; 
+
+	render: function() {
+		var Items = {};
 		if (this.props.items) {
 			Items = this.props.items.map(function(item, i) {
-				return React.DOM.li( 
+				return React.DOM.li(
 					{className:  "history-item",
 					key:  item.id + i,
-					onClick:  function(){this.props.goToItem(i);}.bind(this)}, 
+					onClick:  function(){this.props.goToItem(i);}.bind(this)},
 						item.name,
 						React.DOM.img( {className:"history-image", src:'../data/bike/' + item.image} )
 				);
 			},this);
 		}
 
-		return React.DOM.ul( {className:"history-list"}, 
+		return React.DOM.ul( {className:"history-list"},
 			Items
 		);
 	}
@@ -347,10 +348,10 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 		var pathName = this.state.paths[this.state.currentPathId];
 
 		return (
-			React.DOM.div( 
+			React.DOM.div(
 			{className:  "product-viewer",
-			onWheel:  this.handleWheel}, 
-				ComposedView( 
+			onWheel:  this.handleWheel},
+				ComposedView(
 					{ref:  'path' + this.state.currentPathId,
 					data:  this.props.data} )
 			)
