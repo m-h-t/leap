@@ -280,10 +280,24 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 			    switch( type ){
 
 				   	case "circle":
-
 			   	  	console.log("Circle erkannt");
 			   	    currentPath.goToFuture(-1);
 			   	    break;
+
+			   	    case "swipe":
+			      	console.log("swipe erkannt");
+			        currentPath.goToPast(-1);
+			        break;
+
+			      	case "screenTap":
+			      	console.log("screenTap erkannt");
+			        currentPath.changeFuture(1);
+			        break;
+
+			      	case "keyTap":
+			      	console.log("keyTap erkannt");
+			        currentPath.changeFuture(-1);
+			        break;
 			  	}
 			}
 		}.bind(this));
@@ -321,6 +335,9 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 		viewNode.style.transform = 'translateX('+delta+'px)';
 
 		//TODO: switch path when delta is greater than 100
+		if (delta > 100) {
+			alert('switchPath');
+		}
 
 	},
 

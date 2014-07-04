@@ -80,6 +80,9 @@ var ProductViewer = React.createClass({
 		viewNode.style.transform = 'translateX('+delta+'px)';
 
 		//TODO: switch path when delta is greater than 100
+		if (delta > 100) {
+			alert('switchPath');
+		}
 
 	},
 
