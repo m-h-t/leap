@@ -13,37 +13,58 @@ var ProductViewer = React.createClass({
 	componentDidMount: function () {
 		// listner to leap events goes here
 		// call this.switchPath(delta) to move element
+		var startFrameP = null;
+		var startFrameH = null;
+
 		leapController.on('frame', function( frame ){
 			var ref = 'path' + this.state.currentPathId;
 			var currentPath = this.refs[ref];
 
-		  	for( var i =  0; i < frame.gestures.length; i++){
-		   		var gesture  = frame.gestures[0];
-		   		var type = gesture.type;
-		   		console.log(frame.currentFrameRate);
 
-			    switch( type ){
+			var hand = frame.hands[0];
 
-				   	case "circle":
-			   	  	console.log("Circle erkannt");
-			   	    currentPath.goToFuture(-1);
-			   	    break;
+			if (hand) {
+				if (hand.palmNormal[0] > 0.8 || hand.palmNormal[0] < -0.8) {
+					//swipe
+					if (!startFrameP) {
+						startFrameP = frame;
+					} else {
+						var distance = frame.translation(startFrameP)[0];
+						this.switchPath(distance);
+						if (distance > 150 || distance < -150) {
+							startFrameP = null;
+						}
+					} 
+				}
+				if (hand.palmNormal[0] < 0.2 && hand.palmNormal[0] > -0.2 && hand.fingers.length >= 1 && hand.fingers.length <= 3) {
+						//history gesture
+					if (!startFrameH) {
+						startFrameH = frame;
+					} else {
+						if (Math.abs(frame.translation(startFrameH)[2]) > Math.abs(frame.translation(startFrameH)[0])) {
+							var distance = frame.translation(startFrameH)[2];
+							// console.log(parseInt(distance));
 
-			   	    case "swipe":
-			      	console.log("swipe erkannt");
-			        currentPath.goToPast(-1);
-			        break;
+							if (distance > 15) {
+								currentPath.goToFuture(-1);
+								startFrameH = null;
+							} else if (distance < -15){
+								currentPath.goToPast(-1);
+								startFrameH = null;
+							}
+						} else {
+							var distance = frame.translation(startFrameH)[0];
 
-			      	case "screenTap":
-			      	console.log("screenTap erkannt");
-			        currentPath.changeFuture(1);
-			        break;
-
-			      	case "keyTap":
-			      	console.log("keyTap erkannt");
-			        currentPath.changeFuture(-1);
-			        break;
-			  	}
+							if (distance > 15) {
+								currentPath.changeFuture(1);
+								startFrameH = null;
+							} else if (distance < -15){
+								currentPath.changeFuture(-1);
+								startFrameH = null;
+							}
+						}
+					} 
+				}
 			}
 		}.bind(this));
 
@@ -80,7 +101,7 @@ var ProductViewer = React.createClass({
 		viewNode.style.transform = 'translateX('+delta+'px)';
 
 		//TODO: switch path when delta is greater than 100
-		if (delta > 200 || delta < -200) {
+		if (delta > 150 || delta < -150) {
 			alert('switchPath');
 			this.state.scrolled = 0;
 			viewNode.style.transform = 'translateX(0)';
