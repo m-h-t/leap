@@ -1,3 +1,7 @@
+.composed-view {
+  width: 1050px;
+  margin: 0 auto; }
+
 .view-center {
   width: 55%;
   overflow-y: scroll;
