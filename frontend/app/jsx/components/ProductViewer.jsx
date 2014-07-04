@@ -31,6 +31,16 @@ var ProductViewer = React.createClass({
 
 			   	    case "swipe":
 			      	console.log("swipe erkannt");
+							var isHorizontal = Math.abs(gesture.direction[0]) > Math.abs(gesture.direction[1]);
+							if (isHorizontal){
+								console.log("horizontal");
+								if (gesture.direction[0] > 0){
+									console.log("rechts")
+								}
+							}else{
+								console.log("vertikal");
+							}
+
 			        currentPath.goToPast(-1);
 			        break;
 
@@ -87,10 +97,10 @@ var ProductViewer = React.createClass({
 		var pathName = this.state.paths[this.state.currentPathId];
 
 		return (
-			<div 
+			<div
 			className = "product-viewer"
 			onWheel = {this.handleWheel}>
-				<ComposedView 
+				<ComposedView
 					ref = {'path' + this.state.currentPathId}
 					data = {this.props.data} />
 			</div>
