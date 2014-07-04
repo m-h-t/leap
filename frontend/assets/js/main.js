@@ -323,7 +323,7 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 	handleWheel: function (e) {
 		e.preventDefault();
 		// we write directly to state because it does not affect the DOM
-		this.state.scrolled -= e.deltaX;
+		this.state.scrolled -= e.deltaY;
 
 		this.switchPath(this.state.scrolled);
 	},
