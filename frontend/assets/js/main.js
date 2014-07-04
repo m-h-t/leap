@@ -286,6 +286,16 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 
 			   	    case "swipe":
 			      	console.log("swipe erkannt");
+							var isHorizontal = Math.abs(gesture.direction[0]) > Math.abs(gesture.direction[1]);
+							if (isHorizontal){
+								console.log("horizontal");
+								if (gesture.direction[0] > 0){
+									console.log("rechts")
+								}
+							}else{
+								console.log("vertikal");
+							}
+
 			        currentPath.goToPast(-1);
 			        break;
 
@@ -342,16 +352,17 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 		var pathName = this.state.paths[this.state.currentPathId];
 
 		return (
-			React.DOM.div( 
+			React.DOM.div(
 			{className:  "product-viewer",
 			onWheel:  this.handleWheel}, 
-				ComposedView( 
+				ComposedView(
 					{ref:  'path' + this.state.currentPathId,
 					data:  this.props.data} )
 			)
 		);
 	}
 });
+
 
 
 	//get bike data from xml
