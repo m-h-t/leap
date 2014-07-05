@@ -15,8 +15,9 @@ function DataSet(path) {
 
 	var x2js = new X2JS();
 
-	var json = x2js.xml2json( xmlDoc );
+	var json        = x2js.xml2json( xmlDoc );
 	var beatifulObj = beautitfyJson(json.VGraph.N);
+
 	return beatifulObj;
 }
 
@@ -29,14 +30,15 @@ function beautitfyJson (json) {
  	}
 
  	var children = json.N;
+ 	
  	if (children && children.Data) {
  		// only one child -> obj
- 		beatifulObj.children = [];
+ 		beatifulObj.children    = [];
  		beatifulObj.children[0] = beautitfyJson(children);
 
  	} else if (children) {
  		// many children -> array
- 		beatifulObj.children = [];
+ 		beatifulObj.children = [];	
  		for (var i = 0; i < children.length; i++) {
  			beatifulObj.children[i] = beautitfyJson(children[i]);
  		};
@@ -50,39 +52,41 @@ function beautitfyJson (json) {
 
 	//= require_tree /components
 // the composed view contains
-// all UI elements
+// all UI elements 
 // and represents one "path"
 
 var ChildList = React.createClass({displayName: 'ChildList',
+	
+	render: function() {	
+		var Items = {}; 
 
-	render: function() {
-		var Items = {};
 		if (this.props.items) {
 			var cx = React.addons.classSet;
 
 			Items = this.props.items.map(function(item, i) {
 				var classes = cx({
 				  'child-item': true,
-				  'is-current-future': this.props.currentFutureIndex == i,
+				  'is-current-future': (this.props.currentFutureIndex == i && this.props.highlightChurrent),
 				});
 
-				return React.DOM.li(
+				return React.DOM.li( 
 					{className:  classes,
-					key:  item.id + i,
-					onClick:  function(){this.props.goToItem(item);}.bind(this)},
+					key:        item.id + i,
+					onClick:    function(){this.props.goToItem(item);}.bind(this)}, 
 						item.name,
 						React.DOM.img( {className:"child-image", src:'../data/bike/' + item.image} )
 				);
+				
 			},this);
 		}
 
-		return React.DOM.ul( {className:"child-list"},
+		return React.DOM.ul( {className:"child-list"}, 
 			Items
 		);
 	}
 });
 // the composed view contains
-// all UI elements
+// all UI elements 
 // and represents one "path"
 // stores current state in path
 // and manages "walking in the path"
@@ -112,7 +116,7 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 		// go to specified item
 		// add current item to past
 		// and clear future
-		var tmpPast = this.state.past;
+		var tmpPast   = this.state.past;
 		var newFuture = [];
 
 		tmpPast.push(this.state.current);
@@ -128,7 +132,7 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 	},
 
 	goToPast: function (index) {
-		var tmpPast = this.state.past;
+		var tmpPast   = this.state.past;
 		var tmpFuture = this.state.future;
 
 		// when index is negative go back as many index * -1 steps
@@ -136,7 +140,7 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 
 		if (index >= 0 && index < tmpPast.length) {
 			// remove elements from past
-			var howMany = tmpPast.length - index;
+			var howMany            = tmpPast.length - index;
 			var removedFromHistory = tmpPast.splice(index,howMany);
 
 			// add all removed items except the goToItem to future
@@ -154,7 +158,7 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 	},
 
 	goToFuture: function (index) {
-		var tmpPast = this.state.past;
+		var tmpPast   = this.state.past;
 		var tmpFuture = this.state.future;
 
 		// when index is negative go forward index * -1 steps
@@ -162,10 +166,10 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 
 		if (index >= 0 && index < tmpFuture.length) {
 			// remove elements from future
-			var howMany = tmpFuture.length - index;
+			var howMany   = tmpFuture.length - index;
 			var newFuture = tmpFuture.splice(index,howMany);
 			// also remove goToItem from newFuture
-			var goToItem = newFuture.shift();
+			var goToItem  = newFuture.shift();
 
 			if (newFuture.length === 0 && goToItem.children) {
 				newFuture.push(goToItem.children[0]);
@@ -184,72 +188,80 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 	},
 
 	changeFuture: function (step) {
-		var currentFuture = this.state.future[0];
-		var newFutureIndex = this.state.current.children.indexOf(currentFuture) + step;
-		var childrenSize = this.state.current.children.length - 1;
+		if (this.state.current.children) {
+			var currentFuture  = this.state.future[0];
+			var newFutureIndex = this.state.current.children.indexOf(currentFuture) + step;
+			var childrenSize   = this.state.current.children.length - 1;
 
-		if (newFutureIndex < 0) newFutureIndex = childrenSize;
-		if (newFutureIndex > childrenSize) newFutureIndex = 0;
+			if (newFutureIndex < 0) newFutureIndex = childrenSize;
+			if (newFutureIndex > childrenSize) newFutureIndex = 0;
 
-		var newFuture = [];
-		newFuture[0] = this.state.current.children[newFutureIndex];
+			var newFuture = [];
+			newFuture[0] = this.state.current.children[newFutureIndex];
 
-		this.setState({
-			future: newFuture
-		});
+			this.setState({
+				future: newFuture
+			});
+		}
 	},
-
+	
 	render: function() {
-		var item = this.state.current;
-		var currentFuture = this.state.future[0];
+		var item               = this.state.current;
+		var currentFuture      = this.state.future[0];
 		var currentFutureIndex = 0;
+
 		if (this.state.current.children) {
 			currentFutureIndex = this.state.current.children.indexOf(currentFuture);
 		}
 
-		return React.DOM.div(
-			{className:  "composed-view"},
+		return React.DOM.div( 
+			{className:  "composed-view",
+			style:      {transform: 'translateX('+this.props.viewOffset+'px)'}}, 
 				HistoryList(
-					{items:  this.state.past,
+					{items:     this.state.past, 
 					goToItem:  this.goToPast}),
 
-				React.DOM.div( {className:  "view-center"},
-					ChildList(
-						{items:  item.children,
+				React.DOM.div( {className:  "view-center"}, 
+					ChildList( 
+						{items:               item.children, 
 						currentFutureIndex:  currentFutureIndex,
-						goToItem:  this.goToItem}),
-					React.DOM.div( {className: "current-element"},
-						item.name, " ", React.DOM.br(null),
-						React.DOM.img( {src:'../data/bike/' + item.image} ))
+						goToItem:            this.goToItem,
+						highlightChurrent:   this.props.navigationGestureIsOn}),
+						
+					item.name, " ", React.DOM.br(null),
+					React.DOM.img( {src:'../data/bike/' + item.image} )
 				),
 
 				HistoryList(
-					{items:  this.state.future,
+					{items:     this.state.future, 
 					goToItem:  this.goToFuture})
 		);
 	}
 });
 // the composed view contains
-// all UI elements
+// all UI elements 
 // and represents one "path"
 
 var HistoryList = React.createClass({displayName: 'HistoryList',
+	
+	render: function() {	
+		var Items = {}; 
 
-	render: function() {
-		var Items = {};
 		if (this.props.items) {
 			Items = this.props.items.map(function(item, i) {
-				return React.DOM.li(
+				return React.DOM.li( 
 					{className:  "history-item",
-					key:  item.id + i,
-					onClick:  function(){this.props.goToItem(i);}.bind(this)},
+					key:        item.id + i,
+					onClick:    function(){this.props.goToItem(i);}.bind(this)}, 
+
 						item.name,
 						React.DOM.img( {className:"history-image", src:'../data/bike/' + item.image} )
 				);
+				
 			},this);
 		}
 
-		return React.DOM.ul( {className:"history-list"},
+		return React.DOM.ul( {className:"history-list"}, 
 			Items
 		);
 	}
@@ -262,69 +274,91 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 		return {
 			paths: [this.props.data.id],
 			currentPathId: 0,
-			scrolled: 0
+			scrolled: 0,
+			viewOffset: 0,
+			navigationGestureIsOn: false
 		};
 	},
 
 	componentDidMount: function () {
 		// listner to leap events goes here
-		// call this.switchPath(delta) to move element
-		var startFrameP = null;
-		var startFrameH = null;
+		var startFrame = null;
 
 		leapController.on('frame', function( frame ){
 			var ref = 'path' + this.state.currentPathId;
 			var currentPath = this.refs[ref];
 
-
 			var hand = frame.hands[0];
 
 			if (hand) {
-				if (hand.palmNormal[0] > 0.8 || hand.palmNormal[0] < -0.8) {
-					//swipe
-					if (!startFrameP) {
-						startFrameP = frame;
+
+				var handIsVertical   = (hand.palmNormal[0] > 0.8 || hand.palmNormal[0] < -0.8);
+				var handIsHorizontal = (hand.palmNormal[0] < 0.2 && hand.palmNormal[0] > -0.2);
+				var fewFingers       = (hand.fingers.length <= 3 && hand.fingers.length > 0);
+
+				if (handIsVertical) {
+					// swipe
+					if (!startFrame) {
+						startFrame = frame;
 					} else {
-						var distance = frame.translation(startFrameP)[0];
-						this.switchPath(distance);
-						if (distance > 150 || distance < -150) {
-							startFrameP = null;
+						var distance  = frame.translation(startFrame)[0];
+						var threshold = 150;
+
+						this.switchPath(distance,threshold);
+						// reset gesture when threshold is reached
+						if (distance > threshold || distance < -threshold) {
+							startFrame = null;
 						}
 					} 
 				}
-				if (hand.palmNormal[0] < 0.2 && hand.palmNormal[0] > -0.2 && hand.fingers.length >= 1 && hand.fingers.length <= 3) {
+
+				else if (handIsHorizontal && fewFingers) {
 						//history gesture
-					if (!startFrameH) {
-						startFrameH = frame;
+					if (!startFrame) {
+						startFrame = frame;
+						this.setState({navigationGestureIsOn: true});
+
 					} else {
-						if (Math.abs(frame.translation(startFrameH)[2]) > Math.abs(frame.translation(startFrameH)[0])) {
-							var distance = frame.translation(startFrameH)[2];
-							// console.log(parseInt(distance));
+						var moveOnZAxis = (Math.abs(frame.translation(startFrame)[2]) > Math.abs(frame.translation(startFrame)[0]));
+						var threshold   = 15;
 
-							if (distance > 15) {
+						if (moveOnZAxis) {
+							// navigate through history
+							var distance = frame.translation(startFrame)[2];
+
+							if (distance > threshold) {
 								currentPath.goToFuture(-1);
-								startFrameH = null;
-							} else if (distance < -15){
+								startFrame = null;
+							} else if (distance < -threshold){
 								currentPath.goToPast(-1);
-								startFrameH = null;
+								startFrame = null;
 							}
-						} else {
-							var distance = frame.translation(startFrameH)[0];
 
-							if (distance > 15) {
+						} else {
+							// navigate through child elements
+							var distance = frame.translation(startFrame)[0];
+
+							if (distance > threshold) {
 								currentPath.changeFuture(1);
-								startFrameH = null;
-							} else if (distance < -15){
+								startFrame = null;
+
+							} else if (distance < -threshold){
 								currentPath.changeFuture(-1);
-								startFrameH = null;
+								startFrame = null;
 							}
 						}
-					} 
+					}
+				} else {
+					startFrame = null;
+					this.setState({navigationGestureIsOn: false});
 				}
+			} else {
+				startFrame = null;
+				this.setState({navigationGestureIsOn: false});
 			}
 		}.bind(this));
 
-		//example:
+		//mouse fallback:
 		window.addEventListener('keydown',function(e){
 			var ref = 'path' + this.state.currentPathId;
 			var currentPath = this.refs[ref];
@@ -344,23 +378,25 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 
 	handleWheel: function (e) {
 		e.preventDefault();
-		// we write directly to state because it does not affect the DOM
-		this.state.scrolled -= e.deltaY;
+		this.setState({scrolled: this.state.scrolled - e.deltaY});
+		var threshold = 200;
+		// reset scrolled when threshold is reached
+		if (this.state.scrolled >= threshold || this.state.scrolled <= -threshold) {
+			this.setState({scrolled: 0});
+		}
 
-		this.switchPath(this.state.scrolled);
+		this.switchPath(this.state.scrolled,threshold);
 	},
 
-	switchPath: function (delta) {
+	switchPath: function (delta,threshold) {
 		//move view left or right based on delta
-		var ref = 'path' + this.state.currentPathId;
-		var viewNode = this.refs[ref].getDOMNode();
-		viewNode.style.transform = 'translateX('+delta+'px)';
 
-		//TODO: switch path when delta is greater than 100
-		if (delta > 150 || delta < -150) {
+		this.setState({viewOffset: delta});
+
+		//TODO: switch path when delta is greater than threshold
+		if (delta > threshold || delta < -threshold) {
 			alert('switchPath');
-			this.state.scrolled = 0;
-			viewNode.style.transform = 'translateX(0)';
+			this.setState({viewOffset: 0});
 		}
 
 	},
@@ -369,12 +405,14 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 		var pathName = this.state.paths[this.state.currentPathId];
 
 		return (
-			React.DOM.div(
+			React.DOM.div( 
 			{className:  "product-viewer",
-			onWheel:  this.handleWheel},
-				ComposedView(
-					{ref:  'path' + this.state.currentPathId,
-					data:  this.props.data} )
+			onWheel:    this.handleWheel}, 
+				ComposedView( 
+					{ref:                    'path' + this.state.currentPathId,
+					data:                   this.props.data, 
+					viewOffset:             this.state.viewOffset,
+					navigationGestureIsOn:  this.state.navigationGestureIsOn})
 			)
 		);
 	}

@@ -1,12 +1,17 @@
 .composed-view {
   width: 1050px;
-  margin: 0 auto; }
+  margin: 0 auto;
+  overflow-y: hidden; }
 
 .view-center {
   width: 900px;
-  overflow-y: scroll;
+  overflow-y: auto;
   float: left;
   margin-right: 5px; }
+
+.current-element {
+  border: 1px solid;
+  padding: 12px; }
 
 .child-list {
   height: 100px;
@@ -14,6 +19,7 @@
   border: 1px solid;
   padding: 12px;
   margin: 0;
+  margin-bottom: 10px;
   overflow: hidden;
   white-space: nowrap; }
 

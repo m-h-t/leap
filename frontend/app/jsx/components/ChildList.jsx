@@ -6,22 +6,24 @@ var ChildList = React.createClass({
 	
 	render: function() {	
 		var Items = {}; 
+
 		if (this.props.items) {
 			var cx = React.addons.classSet;
 
 			Items = this.props.items.map(function(item, i) {
 				var classes = cx({
 				  'child-item': true,
-				  'is-current-future': this.props.currentFutureIndex == i,
+				  'is-current-future': (this.props.currentFutureIndex == i && this.props.highlightChurrent),
 				});
 
 				return <li 
 					className = {classes}
-					key = {item.id + i}
-					onClick = {function(){this.props.goToItem(item);}.bind(this)}>
+					key       = {item.id + i}
+					onClick   = {function(){this.props.goToItem(item);}.bind(this)}>
 						{item.name}
 						<img className="child-image" src={'../data/bike/' + item.image} />
 				</li>;
+				
 			},this);
 		}
 

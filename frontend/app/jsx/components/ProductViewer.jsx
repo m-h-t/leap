@@ -6,69 +6,91 @@ var ProductViewer = React.createClass({
 		return {
 			paths: [this.props.data.id],
 			currentPathId: 0,
-			scrolled: 0
+			scrolled: 0,
+			viewOffset: 0,
+			navigationGestureIsOn: false
 		};
 	},
 
 	componentDidMount: function () {
 		// listner to leap events goes here
-		// call this.switchPath(delta) to move element
-		var startFrameP = null;
-		var startFrameH = null;
+		var startFrame = null;
 
 		leapController.on('frame', function( frame ){
 			var ref = 'path' + this.state.currentPathId;
 			var currentPath = this.refs[ref];
 
-
 			var hand = frame.hands[0];
 
 			if (hand) {
-				if (hand.palmNormal[0] > 0.8 || hand.palmNormal[0] < -0.8) {
-					//swipe
-					if (!startFrameP) {
-						startFrameP = frame;
+
+				var handIsVertical   = (hand.palmNormal[0] > 0.8 || hand.palmNormal[0] < -0.8);
+				var handIsHorizontal = (hand.palmNormal[0] < 0.2 && hand.palmNormal[0] > -0.2);
+				var fewFingers       = (hand.fingers.length <= 3 && hand.fingers.length > 0);
+
+				if (handIsVertical) {
+					// swipe
+					if (!startFrame) {
+						startFrame = frame;
 					} else {
-						var distance = frame.translation(startFrameP)[0];
-						this.switchPath(distance);
-						if (distance > 150 || distance < -150) {
-							startFrameP = null;
+						var distance  = frame.translation(startFrame)[0];
+						var threshold = 150;
+
+						this.switchPath(distance,threshold);
+						// reset gesture when threshold is reached
+						if (distance > threshold || distance < -threshold) {
+							startFrame = null;
 						}
 					} 
 				}
-				if (hand.palmNormal[0] < 0.2 && hand.palmNormal[0] > -0.2 && hand.fingers.length >= 1 && hand.fingers.length <= 3) {
+
+				else if (handIsHorizontal && fewFingers) {
 						//history gesture
-					if (!startFrameH) {
-						startFrameH = frame;
+					if (!startFrame) {
+						startFrame = frame;
+						this.setState({navigationGestureIsOn: true});
+
 					} else {
-						if (Math.abs(frame.translation(startFrameH)[2]) > Math.abs(frame.translation(startFrameH)[0])) {
-							var distance = frame.translation(startFrameH)[2];
-							// console.log(parseInt(distance));
+						var moveOnZAxis = (Math.abs(frame.translation(startFrame)[2]) > Math.abs(frame.translation(startFrame)[0]));
+						var threshold   = 15;
 
-							if (distance > 15) {
+						if (moveOnZAxis) {
+							// navigate through history
+							var distance = frame.translation(startFrame)[2];
+
+							if (distance > threshold) {
 								currentPath.goToFuture(-1);
-								startFrameH = null;
-							} else if (distance < -15){
+								startFrame = null;
+							} else if (distance < -threshold){
 								currentPath.goToPast(-1);
-								startFrameH = null;
+								startFrame = null;
 							}
-						} else {
-							var distance = frame.translation(startFrameH)[0];
 
-							if (distance > 15) {
+						} else {
+							// navigate through child elements
+							var distance = frame.translation(startFrame)[0];
+
+							if (distance > threshold) {
 								currentPath.changeFuture(1);
-								startFrameH = null;
-							} else if (distance < -15){
+								startFrame = null;
+
+							} else if (distance < -threshold){
 								currentPath.changeFuture(-1);
-								startFrameH = null;
+								startFrame = null;
 							}
 						}
-					} 
+					}
+				} else {
+					startFrame = null;
+					this.setState({navigationGestureIsOn: false});
 				}
+			} else {
+				startFrame = null;
+				this.setState({navigationGestureIsOn: false});
 			}
 		}.bind(this));
 
-		//example:
+		//mouse fallback:
 		window.addEventListener('keydown',function(e){
 			var ref = 'path' + this.state.currentPathId;
 			var currentPath = this.refs[ref];
@@ -88,23 +110,25 @@ var ProductViewer = React.createClass({
 
 	handleWheel: function (e) {
 		e.preventDefault();
-		// we write directly to state because it does not affect the DOM
-		this.state.scrolled -= e.deltaY;
+		this.setState({scrolled: this.state.scrolled - e.deltaY});
+		var threshold = 200;
+		// reset scrolled when threshold is reached
+		if (this.state.scrolled >= threshold || this.state.scrolled <= -threshold) {
+			this.setState({scrolled: 0});
+		}
 
-		this.switchPath(this.state.scrolled);
+		this.switchPath(this.state.scrolled,threshold);
 	},
 
-	switchPath: function (delta) {
+	switchPath: function (delta,threshold) {
 		//move view left or right based on delta
-		var ref = 'path' + this.state.currentPathId;
-		var viewNode = this.refs[ref].getDOMNode();
-		viewNode.style.transform = 'translateX('+delta+'px)';
 
-		//TODO: switch path when delta is greater than 100
-		if (delta > 150 || delta < -150) {
+		this.setState({viewOffset: delta});
+
+		//TODO: switch path when delta is greater than threshold
+		if (delta > threshold || delta < -threshold) {
 			alert('switchPath');
-			this.state.scrolled = 0;
-			viewNode.style.transform = 'translateX(0)';
+			this.setState({viewOffset: 0});
 		}
 
 	},
@@ -115,10 +139,12 @@ var ProductViewer = React.createClass({
 		return (
 			<div 
 			className = "product-viewer"
-			onWheel = {this.handleWheel}>
+			onWheel   = {this.handleWheel}>
 				<ComposedView 
-					ref = {'path' + this.state.currentPathId}
-					data = {this.props.data} />
+					ref                   = {'path' + this.state.currentPathId}
+					data                  = {this.props.data} 
+					viewOffset            = {this.state.viewOffset}
+					navigationGestureIsOn = {this.state.navigationGestureIsOn}/>
 			</div>
 		);
 	}
