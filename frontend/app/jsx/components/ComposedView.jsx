@@ -6,23 +6,21 @@
 
 var ComposedView = React.createClass({
 	getInitialState: function () {
-		return {
-			past: [],
-			current: {},
-			future: [],
-		};
+		return this.props.initalState;
 	},
 
 	componentWillMount: function () {
-		var initialFuture = [];
-		if (this.props.data.children) {
-			initialFuture.push(this.props.data.children[0]);
-		}
+		if (!this.state.current) {
+			var initialFuture = [];
+			if (this.props.data.children) {
+				initialFuture.push(this.props.data.children[0]);
+			}
 
-		this.setState({
-			current: this.props.data,
-			future: initialFuture
-		});
+			this.setState({
+				current: this.props.data,
+				future: initialFuture
+			});
+		}
 	},
 
 	goToItem: function (item) {
@@ -106,15 +104,14 @@ var ComposedView = React.createClass({
 			var newFutureIndex = this.state.current.children.indexOf(currentFuture) + step;
 			var childrenSize   = this.state.current.children.length - 1;
 
-			if (newFutureIndex < 0) newFutureIndex = childrenSize;
-			if (newFutureIndex > childrenSize) newFutureIndex = 0;
+			if (newFutureIndex >= 0 && newFutureIndex <= childrenSize) {
+				var newFuture = [];
+				newFuture[0] = this.state.current.children[newFutureIndex];
 
-			var newFuture = [];
-			newFuture[0] = this.state.current.children[newFutureIndex];
-
-			this.setState({
-				future: newFuture
-			});
+				this.setState({
+					future: newFuture
+				});
+			}
 		}
 	},
 	
@@ -140,7 +137,7 @@ var ComposedView = React.createClass({
 						currentFutureIndex = {currentFutureIndex}
 						goToItem           = {this.goToItem}
 						highlightChurrent  = {this.props.navigationGestureIsOn}/>
-						
+
 					{item.name} <br/>
 					<img src={'../data/bike/' + item.image} />
 				</div>
