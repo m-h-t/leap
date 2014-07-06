@@ -48,6 +48,9 @@ function beautitfyJson (json) {
 }
 
 
+	//use react classSet
+	var ClassSet = React.addons.classSet;
+
 //mixins
 
 	//= require_tree /components
@@ -61,10 +64,8 @@ var ChildList = React.createClass({displayName: 'ChildList',
 		var Items = {}; 
 
 		if (this.props.items) {
-			var cx = React.addons.classSet;
-
 			Items = this.props.items.map(function(item, i) {
-				var classes = cx({
+				var classes = ClassSet({
 				  'child-item': true,
 				  'is-current-future': (this.props.currentFutureIndex == i && this.props.highlightChurrent),
 				});
@@ -211,27 +212,29 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 			currentFutureIndex = this.state.current.children.indexOf(currentFuture);
 		}
 
-		return React.DOM.div( 
-			{className:  "composed-view",
-			style:      {transform: 'translateX('+this.props.viewOffset+'px)'}}, 
-				HistoryList(
-					{items:     this.state.past, 
-					goToItem:  this.goToPast}),
+		return (
+			React.DOM.div( 
+				{className:  "composed-view",
+				style:      {transform: 'translateX('+this.props.viewOffset+'px)'}}, 
+					HistoryList(
+						{items:     this.state.past, 
+						goToItem:  this.goToPast}),
 
-				React.DOM.div( {className:  "view-center"}, 
-					ChildList( 
-						{items:               item.children, 
-						currentFutureIndex:  currentFutureIndex,
-						goToItem:            this.goToItem,
-						highlightChurrent:   this.props.navigationGestureIsOn}),
+					React.DOM.div( {className:  "view-center"}, 
+						ChildList( 
+							{items:               item.children, 
+							currentFutureIndex:  currentFutureIndex,
+							goToItem:            this.goToItem,
+							highlightChurrent:   this.props.navigationGestureIsOn}),
 
-					item.name, " ", React.DOM.br(null),
-					React.DOM.img( {src:'../data/bike/' + item.image} )
-				),
+						item.name, " ", React.DOM.br(null),
+						React.DOM.img( {src:'../data/bike/' + item.image} )
+					),
 
-				HistoryList(
-					{items:     this.state.future, 
-					goToItem:  this.goToFuture})
+					HistoryList(
+						{items:     this.state.future, 
+						goToItem:  this.goToFuture})
+			)
 		);
 	}
 });
@@ -246,20 +249,58 @@ var HistoryList = React.createClass({displayName: 'HistoryList',
 
 		if (this.props.items) {
 			Items = this.props.items.map(function(item, i) {
-				return React.DOM.li( 
-					{className:  "history-item",
-					key:        item.id + i,
-					onClick:    function(){this.props.goToItem(i);}.bind(this)}, 
+				return (
+					React.DOM.li( 
+						{className:  "history-item",
+						key:        item.id + i,
+						onClick:    function(){this.props.goToItem(i);}.bind(this)}, 
 
 						item.name,
-						React.DOM.img( {className:"history-image", src:'../data/bike/' + item.image} )
+						React.DOM.img( 
+							{className:  "history-image", 
+							src:        '../data/bike/' + item.image})
+					)
 				);
 				
 			},this);
 		}
 
-		return React.DOM.ul( {className:"history-list"}, 
-			Items
+		return (
+			React.DOM.ul( {className:"history-list"}, 
+				Items
+			)
+		);
+	}
+});
+// the composed view contains
+// all UI elements 
+// and represents one "path"
+
+var PathList = React.createClass({displayName: 'PathList',
+	
+	render: function() {	
+		var currentPath = this.props.storedPaths[this.props.currentPathId];
+
+		var Paths = this.props.storedPaths.map(function(path,index) {
+			var classes = ClassSet({
+				'path-list-element': true,
+				'is-current'       : (index == this.props.currentPathId)
+			});
+
+			return (
+				React.DOM.li( 
+					{key:        'path'+index,
+					className:  classes}, 
+					path.current.id
+				)
+			);
+		},this);
+		return (
+			React.DOM.ul( 
+				{className:  "path-list"}, 
+
+				Paths
+			)
 		);
 	}
 });
@@ -300,14 +341,15 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 						startFrame = frame;
 					} else {
 						var distance  = frame.translation(startFrame)[0];
-						var threshold = 150;
+						var threshold = 100;
 
 						this.switchPath(distance,threshold);
 						// reset gesture when threshold is reached
 						if (distance > threshold || distance < -threshold) {
 							startFrame = null;
 						}
-					} 
+					}
+					this.setState({navigationGestureIsOn: false});
 				}
 
 				else if (handIsHorizontal && fewFingers) {
@@ -351,7 +393,7 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 					// save path
 					if (startFrame) {
 						if (frame.rotationAngle(startFrame) > 0.5) {
-							this.savePath(currentPath);
+							this.savePath();
 							this.setState({navigationGestureIsOn: false});
 							startFrame = null;
 						}
@@ -380,10 +422,13 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 			} else if (e.keyIdentifier == 'Left') {
 				currentPath.changeFuture(-1);
 			} else if (e.keyCode == 32) {
-				this.savePath(currentPath);
+				this.savePath();
 			}
 
 		}.bind(this),false);
+
+		//store inital path
+		this.savePath(true);
 	},
 
 	handleWheel: function (e) {
@@ -400,61 +445,68 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 
 	switchPath: function (delta,threshold) {
 		//move view left or right based on delta
-		if (this.state.storedPaths.length > 1) {
+		var currentId = this.state.currentPathId;
+		var newPathId, canGoLeft, canGoRight;
+
+		if (delta < 0) {
+			newPathId = currentId - 1;
+			canGoLeft = newPathId >= 0;
+		} else {
+			newPathId  = currentId + 1;
+			canGoRight = newPathId < this.state.storedPaths.length;
+		}
+
+		if (canGoLeft || canGoRight) {
 			this.setState({viewOffset: delta});
 
 			//switch path when delta is greater than threshold
 			if (delta > threshold || delta < -threshold) {
-				var currentId = this.state.currentPathId;
-				var newPathId;
-
-				if (delta < 0) {
-					newPathId = currentId - 1;
-				} else {
-					newPathId = currentId + 1;
-				}
-
-				console.log(newPathId);
-				if (newPathId > 0 && newPathId < this.state.storedPaths.length) {
-					this.setState({currentPathId: newPathId});
-					this.setState({viewOffset: 0});
-
-					alert('switchPath');
-				}
+				this.savePath(true); //update stored path
+				this.setState({currentPathId: newPathId});
+				this.setState({viewOffset: 0});
 			}
 		}
 	},
 
-	savePath: function (currentPath) {
+	savePath: function (updateExisting) {
+		var ref         = 'path' + this.state.currentPathId;
+		var currentPath = this.refs[ref];
 		var copyOfState = {};
 
 		copyOfState.current = currentPath.state.current;
 		copyOfState.past    = currentPath.state.past.slice();
 		copyOfState.future  = currentPath.state.future.slice();
 
-		var tempPath = this.state.storedPaths;
-		tempPath.push(copyOfState);
+		var tempPaths = this.state.storedPaths;
+		if (updateExisting) {
+			tempPaths[this.state.currentPathId] = copyOfState;
+		} else {
+			tempPaths.push(copyOfState);
+		}
 
 		this.setState({
-			storedPaths: tempPath
+			storedPaths: tempPaths,
+			currentPathId: tempPaths.length - 1
 		});
-
-		alert('saved');
 	},
 
 	render: function() {
 
 		return (
 			React.DOM.div( 
-			{className:  "product-viewer",
-			onWheel:    this.handleWheel}, 
+				{className:  "product-viewer",
+				onWheel:    this.handleWheel}, 
+
 				ComposedView( 
 					{ref:                    'path' + this.state.currentPathId,
 					key:                    'path' + this.state.currentPathId,
 					data:                   this.props.data, 
 					viewOffset:             this.state.viewOffset,
 					initalState:            this.state.storedPaths[this.state.currentPathId],
-					navigationGestureIsOn:  this.state.navigationGestureIsOn})
+					navigationGestureIsOn:  this.state.navigationGestureIsOn}),
+				PathList( 
+					{storedPaths:    this.state.storedPaths,
+					currentPathId:  this.state.currentPathId})
 			)
 		);
 	}

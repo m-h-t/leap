@@ -3,6 +3,19 @@
   margin: 0 auto;
   overflow-y: hidden; }
 
+.path-list {
+  width: 1050px;
+  margin: 20px auto;
+  text-align: center;
+  list-style: none;
+  font-size: 22px; }
+
+.path-list-element {
+  float: left;
+  margin-right: 10px; }
+  .path-list-element.is-current {
+    color: red; }
+
 .view-center {
   width: 900px;
   overflow-y: auto;

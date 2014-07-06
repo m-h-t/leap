@@ -8,10 +8,8 @@ var ChildList = React.createClass({
 		var Items = {}; 
 
 		if (this.props.items) {
-			var cx = React.addons.classSet;
-
 			Items = this.props.items.map(function(item, i) {
-				var classes = cx({
+				var classes = ClassSet({
 				  'child-item': true,
 				  'is-current-future': (this.props.currentFutureIndex == i && this.props.highlightChurrent),
 				});

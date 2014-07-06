@@ -35,14 +35,15 @@ var ProductViewer = React.createClass({
 						startFrame = frame;
 					} else {
 						var distance  = frame.translation(startFrame)[0];
-						var threshold = 150;
+						var threshold = 100;
 
 						this.switchPath(distance,threshold);
 						// reset gesture when threshold is reached
 						if (distance > threshold || distance < -threshold) {
 							startFrame = null;
 						}
-					} 
+					}
+					this.setState({navigationGestureIsOn: false});
 				}
 
 				else if (handIsHorizontal && fewFingers) {
@@ -86,7 +87,7 @@ var ProductViewer = React.createClass({
 					// save path
 					if (startFrame) {
 						if (frame.rotationAngle(startFrame) > 0.5) {
-							this.savePath(currentPath);
+							this.savePath();
 							this.setState({navigationGestureIsOn: false});
 							startFrame = null;
 						}
@@ -115,10 +116,13 @@ var ProductViewer = React.createClass({
 			} else if (e.keyIdentifier == 'Left') {
 				currentPath.changeFuture(-1);
 			} else if (e.keyCode == 32) {
-				this.savePath(currentPath);
+				this.savePath();
 			}
 
 		}.bind(this),false);
+
+		//store inital path
+		this.savePath(true);
 	},
 
 	handleWheel: function (e) {
@@ -135,54 +139,58 @@ var ProductViewer = React.createClass({
 
 	switchPath: function (delta,threshold) {
 		//move view left or right based on delta
-		if (this.state.storedPaths.length > 1) {
+		var currentId = this.state.currentPathId;
+		var newPathId, canGoLeft, canGoRight;
+
+		if (delta < 0) {
+			newPathId = currentId - 1;
+			canGoLeft = newPathId >= 0;
+		} else {
+			newPathId  = currentId + 1;
+			canGoRight = newPathId < this.state.storedPaths.length;
+		}
+
+		if (canGoLeft || canGoRight) {
 			this.setState({viewOffset: delta});
 
 			//switch path when delta is greater than threshold
 			if (delta > threshold || delta < -threshold) {
-				var currentId = this.state.currentPathId;
-				var newPathId;
-
-				if (delta < 0) {
-					newPathId = currentId - 1;
-				} else {
-					newPathId = currentId + 1;
-				}
-
-				console.log(newPathId);
-				if (newPathId > 0 && newPathId < this.state.storedPaths.length) {
-					this.setState({currentPathId: newPathId});
-					this.setState({viewOffset: 0});
-
-					alert('switchPath');
-				}
+				this.savePath(true); //update stored path
+				this.setState({currentPathId: newPathId});
+				this.setState({viewOffset: 0});
 			}
 		}
 	},
 
-	savePath: function (currentPath) {
+	savePath: function (updateExisting) {
+		var ref         = 'path' + this.state.currentPathId;
+		var currentPath = this.refs[ref];
 		var copyOfState = {};
 
 		copyOfState.current = currentPath.state.current;
 		copyOfState.past    = currentPath.state.past.slice();
 		copyOfState.future  = currentPath.state.future.slice();
 
-		var tempPath = this.state.storedPaths;
-		tempPath.push(copyOfState);
+		var tempPaths = this.state.storedPaths;
+		if (updateExisting) {
+			tempPaths[this.state.currentPathId] = copyOfState;
+		} else {
+			tempPaths.push(copyOfState);
+		}
 
 		this.setState({
-			storedPaths: tempPath
+			storedPaths: tempPaths,
+			currentPathId: tempPaths.length - 1
 		});
-
-		alert('saved');
 	},
 
 	render: function() {
 
 		return (
 			<div 
-			className = "product-viewer"
-			onWheel   = {this.handleWheel}>
+				className = "product-viewer"
+				onWheel   = {this.handleWheel}>
+
 				<ComposedView 
 					ref                   = {'path' + this.state.currentPathId}
 					key                   = {'path' + this.state.currentPathId}
@@ -190,6 +198,9 @@ var ProductViewer = React.createClass({
 					viewOffset            = {this.state.viewOffset}
 					initalState           = {this.state.storedPaths[this.state.currentPathId]}
 					navigationGestureIsOn = {this.state.navigationGestureIsOn}/>
+				<PathList 
+					storedPaths   = {this.state.storedPaths}
+					currentPathId = {this.state.currentPathId}/>
 			</div>
 		);
 	}

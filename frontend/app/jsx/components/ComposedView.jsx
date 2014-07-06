@@ -124,27 +124,29 @@ var ComposedView = React.createClass({
 			currentFutureIndex = this.state.current.children.indexOf(currentFuture);
 		}
 
-		return <div 
-			className = "composed-view"
-			style     = {{transform: 'translateX('+this.props.viewOffset+'px)'}}>
-				<HistoryList
-					items    = {this.state.past} 
-					goToItem = {this.goToPast}/>
+		return (
+			<div 
+				className = "composed-view"
+				style     = {{transform: 'translateX('+this.props.viewOffset+'px)'}}>
+					<HistoryList
+						items    = {this.state.past} 
+						goToItem = {this.goToPast}/>
 
-				<div className = "view-center">
-					<ChildList 
-						items              = {item.children} 
-						currentFutureIndex = {currentFutureIndex}
-						goToItem           = {this.goToItem}
-						highlightChurrent  = {this.props.navigationGestureIsOn}/>
+					<div className = "view-center">
+						<ChildList 
+							items              = {item.children} 
+							currentFutureIndex = {currentFutureIndex}
+							goToItem           = {this.goToItem}
+							highlightChurrent  = {this.props.navigationGestureIsOn}/>
 
-					{item.name} <br/>
-					<img src={'../data/bike/' + item.image} />
-				</div>
+						{item.name} <br/>
+						<img src={'../data/bike/' + item.image} />
+					</div>
 
-				<HistoryList
-					items    = {this.state.future} 
-					goToItem = {this.goToFuture}/>
-		</div>;
+					<HistoryList
+						items    = {this.state.future} 
+						goToItem = {this.goToFuture}/>
+			</div>
+		);
 	}
 });

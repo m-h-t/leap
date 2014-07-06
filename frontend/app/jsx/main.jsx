@@ -4,6 +4,9 @@
 	"use-strict";
 	//= require DataSet.js
 
+	//use react classSet
+	var ClassSet = React.addons.classSet;
+
 	//= require mixins.jsx
 	//= require_tree /components
 
