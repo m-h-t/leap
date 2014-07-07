@@ -67,17 +67,34 @@
     height: auto; }
 
 .path-list {
+  box-sizing: border-box;
   width: 1050px;
+  height: 38px;
   margin: 20px auto;
-  text-align: center;
+  padding: 4px 4px 4px 400px;
+  text-align: left;
   list-style: none;
-  font-size: 22px; }
+  overflow-y: hidden;
+  white-space: nowrap; }
 
 .path-list-element {
-  float: left;
-  margin-right: 10px; }
+  background-color: #cecfd1;
+  border: 1px solid #999ca0;
+  border-radius: 3px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff;
+  width: 200px;
+  height: 30px;
+  font-size: 18px;
+  line-height: 30px;
+  display: inline-block;
+  margin: 0 10px 5px; }
   .path-list-element.is-current {
-    color: red; }
+    color: #000;
+    border-color: #fff;
+    box-shadow: 0 0 3px #000; }
 
 .history-list {
   width: 50px;

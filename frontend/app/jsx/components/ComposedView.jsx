@@ -135,8 +135,7 @@ var ComposedView = React.createClass({
 
 		return (
 			<div 
-				className = "composed-view"
-				style     = {{transform: 'translateX('+this.props.viewOffset+'px)'}}>
+				className = "composed-view">
 					<HistoryList
 						items    = {this.state.past} 
 						goToItem = {this.goToPast}/>

@@ -235,8 +235,7 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 
 		return (
 			React.DOM.div( 
-				{className:  "composed-view",
-				style:      {transform: 'translateX('+this.props.viewOffset+'px)'}}, 
+				{className:  "composed-view"}, 
 					HistoryList(
 						{items:     this.state.past, 
 						goToItem:  this.goToPast}),
@@ -309,7 +308,8 @@ var HistoryList = React.createClass({displayName: 'HistoryList',
 var PathList = React.createClass({displayName: 'PathList',
 	
 	render: function() {	
-		var currentPath = this.props.storedPaths[this.props.currentPathId];
+		var currentPath  = this.props.storedPaths[this.props.currentPathId];
+		var movePosition = parseInt((this.props.currentPathId * -222) + this.props.viewOffset);
 
 		var Paths = this.props.storedPaths.map(function(path,index) {
 			var classes = ClassSet({
@@ -320,7 +320,8 @@ var PathList = React.createClass({displayName: 'PathList',
 			return (
 				React.DOM.li( 
 					{key:        'path'+index,
-					className:  classes}, 
+					className:  classes,
+					style:      {transform: 'translateX('+ movePosition +'px)'}}, 
 					path.current.id
 				)
 			);
@@ -478,7 +479,7 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 		var currentId = this.state.currentPathId;
 		var newPathId, canGoLeft, canGoRight;
 
-		if (delta < 0) {
+		if (delta > 0) {
 			newPathId = currentId - 1;
 			canGoLeft = newPathId >= 0;
 		} else {
@@ -527,16 +528,17 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 				{className:  "product-viewer",
 				onWheel:    this.handleWheel}, 
 
+				PathList( 
+					{storedPaths:    this.state.storedPaths,
+					currentPathId:  this.state.currentPathId,
+					viewOffset:     this.state.viewOffset}),
+
 				ComposedView( 
 					{ref:                    'path' + this.state.currentPathId,
 					key:                    'path' + this.state.currentPathId,
 					data:                   this.props.data, 
-					viewOffset:             this.state.viewOffset,
 					initalState:            this.state.storedPaths[this.state.currentPathId],
-					navigationGestureIsOn:  this.state.navigationGestureIsOn}),
-				PathList( 
-					{storedPaths:    this.state.storedPaths,
-					currentPathId:  this.state.currentPathId})
+					navigationGestureIsOn:  this.state.navigationGestureIsOn})
 			)
 		);
 	}

@@ -5,7 +5,8 @@
 var PathList = React.createClass({
 	
 	render: function() {	
-		var currentPath = this.props.storedPaths[this.props.currentPathId];
+		var currentPath  = this.props.storedPaths[this.props.currentPathId];
+		var movePosition = parseInt((this.props.currentPathId * -222) + this.props.viewOffset);
 
 		var Paths = this.props.storedPaths.map(function(path,index) {
 			var classes = ClassSet({
@@ -16,7 +17,8 @@ var PathList = React.createClass({
 			return (
 				<li 
 					key       = {'path'+index}
-					className = {classes}>
+					className = {classes}
+					style     = {{transform: 'translateX('+ movePosition +'px)'}}>
 					{path.current.id}
 				</li>
 			);

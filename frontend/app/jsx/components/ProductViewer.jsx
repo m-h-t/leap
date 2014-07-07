@@ -142,7 +142,7 @@ var ProductViewer = React.createClass({
 		var currentId = this.state.currentPathId;
 		var newPathId, canGoLeft, canGoRight;
 
-		if (delta < 0) {
+		if (delta > 0) {
 			newPathId = currentId - 1;
 			canGoLeft = newPathId >= 0;
 		} else {
@@ -191,16 +191,17 @@ var ProductViewer = React.createClass({
 				className = "product-viewer"
 				onWheel   = {this.handleWheel}>
 
+				<PathList 
+					storedPaths   = {this.state.storedPaths}
+					currentPathId = {this.state.currentPathId}
+					viewOffset    = {this.state.viewOffset}/>
+
 				<ComposedView 
 					ref                   = {'path' + this.state.currentPathId}
 					key                   = {'path' + this.state.currentPathId}
 					data                  = {this.props.data} 
-					viewOffset            = {this.state.viewOffset}
 					initalState           = {this.state.storedPaths[this.state.currentPathId]}
 					navigationGestureIsOn = {this.state.navigationGestureIsOn}/>
-				<PathList 
-					storedPaths   = {this.state.storedPaths}
-					currentPathId = {this.state.currentPathId}/>
 			</div>
 		);
 	}
