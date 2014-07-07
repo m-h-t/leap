@@ -14,11 +14,12 @@ var HistoryList = React.createClass({
 						className = "history-item"
 						key       = {item.id + i}
 						onClick   = {function(){this.props.goToItem(i);}.bind(this)}>
-
-						{item.name}
 						<img 
 							className = "history-image" 
 							src       = {'../data/bike/' + item.image}/>
+						<p className = "history-name">
+							{item.name}
+						</p>
 					</li>
 				);
 				
