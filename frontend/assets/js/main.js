@@ -61,30 +61,31 @@ function beautitfyJson (json) {
 var ChildList = React.createClass({displayName: 'ChildList',
 	
 	render: function() {	
-		var Items = {}; 
-
-		if (this.props.items) {
-			Items = this.props.items.map(function(item, i) {
-				var classes = ClassSet({
-				  'child-item': true,
-				  'is-current-future': (this.props.currentFutureIndex == i && this.props.highlightChurrent),
-				});
-
-				return (
-					React.DOM.li( 
-						{style:      {transform: 'translateX('+this.props.currentFutureIndex * -100 +'px)'},
-						className:  classes,
-						key:        item.id + i,
-						onClick:    function(){this.props.goToItem(item);}.bind(this)}, 
-							React.DOM.p( {className:  "child-name"}, 
-								item.name
-							),
-							React.DOM.img( {className:"child-image", src:'../data/bike/' + item.image} )
-					)
-				);
-				
-			},this);
+		var itemList = this.props.items;
+		if (!itemList) {
+			itemList = [{name:'', image: 'data/empty.png'}];
 		}
+
+		var	Items = itemList.map(function(item, i) {
+			var classes = ClassSet({
+			  'child-item': true,
+			  'is-current-future': (this.props.currentFutureIndex == i && this.props.highlightChurrent),
+			});
+
+			return (
+				React.DOM.li( 
+					{style:      {transform: 'translateX('+this.props.currentFutureIndex * -115 +'px)'},
+					className:  classes,
+					key:        item.id + i,
+					onClick:    function(){this.props.goToItem(item);}.bind(this)}, 
+						React.DOM.p( {className:  "child-name"}, 
+							item.name
+						),
+						React.DOM.img( {className:"child-image", src:'../data/bike/' + item.image} )
+				)
+			);
+			
+		},this);
 
 		return (
 			React.DOM.div( {className:  "child-list-wrapper"}, 
@@ -320,7 +321,7 @@ var PathList = React.createClass({displayName: 'PathList',
 
 			return (
 				React.DOM.li( 
-					{key:        'path'+index,
+					{key:        path.current.id + index,
 					className:  classes,
 					style:      {transform: 'translateX('+ movePosition +'px)'}}, 
 					path.current.id
@@ -454,7 +455,12 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 			} else if (e.keyIdentifier == 'Left') {
 				currentPath.changeFuture(-1);
 			} else if (e.keyCode == 32) {
+				//enter key
 				this.savePath();
+			} else if (e.keyCode == 8) {
+				//backspace
+				e.preventDefault();
+				this.deletePath();
 			}
 
 		}.bind(this),false);
@@ -520,6 +526,21 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 			storedPaths: tempPaths,
 			currentPathId: tempPaths.length - 1
 		});
+	},
+
+	deletePath: function () {
+		var tempPaths = this.state.storedPaths;
+		if (tempPaths.length > 1) {
+			tempPaths.splice(this.state.currentPathId,1);
+
+			var newCurrentPathId = this.state.currentPathId - 1;
+			if (newCurrentPathId < 0) newCurrentPathId = 0;
+
+			this.setState({
+				storedPaths: tempPaths,
+				currentPathId: newCurrentPathId
+			});
+		}
 	},
 
 	render: function() {

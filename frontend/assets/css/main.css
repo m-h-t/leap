@@ -39,7 +39,6 @@
   margin: 15px 3px 2px; }
 
 .child-item {
-  -webkit-transition: 0.4s;
   transition: 0.4s;
   position: relative;
   background-color: #cecfd1;
@@ -77,6 +76,7 @@
   white-space: nowrap; }
 
 .path-list-element {
+  transition: 0.2s;
   background-color: #cecfd1;
   border: 1px solid #999ca0;
   border-radius: 3px;
@@ -114,6 +114,9 @@
     height: auto; }
   .history-item .history-name {
     position: absolute;
+    width: 65px;
+    overflow: hidden;
+    text-overflow: ellipsis;
     bottom: 2px;
     left: 5px;
     color: #fff;

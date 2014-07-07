@@ -12,6 +12,7 @@
 	height: 70px;
 	margin-bottom: 5px;
 	background-color: $grey;
+	
 
 	.history-image {
 		width: 100%;
@@ -19,6 +20,9 @@
 	}
 	.history-name {
 		position: absolute;
+		width: 65px;
+		overflow: hidden;
+		text-overflow: ellipsis;
 		bottom: 2px;
 		left: 5px;
 		color: #fff;

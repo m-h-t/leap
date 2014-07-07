@@ -116,7 +116,12 @@ var ProductViewer = React.createClass({
 			} else if (e.keyIdentifier == 'Left') {
 				currentPath.changeFuture(-1);
 			} else if (e.keyCode == 32) {
+				//enter key
 				this.savePath();
+			} else if (e.keyCode == 8) {
+				//backspace
+				e.preventDefault();
+				this.deletePath();
 			}
 
 		}.bind(this),false);
@@ -182,6 +187,21 @@ var ProductViewer = React.createClass({
 			storedPaths: tempPaths,
 			currentPathId: tempPaths.length - 1
 		});
+	},
+
+	deletePath: function () {
+		var tempPaths = this.state.storedPaths;
+		if (tempPaths.length > 1) {
+			tempPaths.splice(this.state.currentPathId,1);
+
+			var newCurrentPathId = this.state.currentPathId - 1;
+			if (newCurrentPathId < 0) newCurrentPathId = 0;
+
+			this.setState({
+				storedPaths: tempPaths,
+				currentPathId: newCurrentPathId
+			});
+		}
 	},
 
 	render: function() {

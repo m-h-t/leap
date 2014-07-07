@@ -16,7 +16,7 @@ var PathList = React.createClass({
 
 			return (
 				<li 
-					key       = {'path'+index}
+					key       = {path.current.id + index}
 					className = {classes}
 					style     = {{transform: 'translateX('+ movePosition +'px)'}}>
 					{path.current.id}
