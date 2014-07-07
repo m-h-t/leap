@@ -30,16 +30,18 @@
   list-style: none;
   margin: 0;
   padding: 3px;
-  text-align: center;
   margin-bottom: 10px;
   overflow: hidden;
-  white-space: nowrap; }
+  white-space: nowrap;
+  padding-left: 400px; }
 
 .title {
   text-align: left;
   margin: 15px 3px 2px; }
 
 .child-item {
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
   position: relative;
   background-color: #cecfd1;
   color: #fff;
@@ -49,8 +51,6 @@
   margin-right: 5px;
   border-radius: 2px; }
   .child-item.is-current-future {
-    -webkit-transition: 0.6s;
-    transition: 0.6s;
     color: #000;
     box-shadow: 0 0 5px #000;
     text-shadow: 0 0 4px #fff, 0 0 2px #fff; }

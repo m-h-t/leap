@@ -70,14 +70,17 @@ var ChildList = React.createClass({displayName: 'ChildList',
 				  'is-current-future': (this.props.currentFutureIndex == i && this.props.highlightChurrent),
 				});
 
-				return React.DOM.li( 
-					{className:  classes,
-					key:        item.id + i,
-					onClick:    function(){this.props.goToItem(item);}.bind(this)}, 
-						React.DOM.p( {className:  "child-name"}, 
-							item.name
-						),
-						React.DOM.img( {className:"child-image", src:'../data/bike/' + item.image} )
+				return (
+					React.DOM.li( 
+						{style:      {transform: 'translateX('+this.props.currentFutureIndex * -100 +'px)'},
+						className:  classes,
+						key:        item.id + i,
+						onClick:    function(){this.props.goToItem(item);}.bind(this)}, 
+							React.DOM.p( {className:  "child-name"}, 
+								item.name
+							),
+							React.DOM.img( {className:"child-image", src:'../data/bike/' + item.image} )
+					)
 				);
 				
 			},this);
@@ -110,7 +113,10 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 		if (!this.state.current) {
 			var initialFuture = [];
 			if (this.props.data.children) {
-				initialFuture.push(this.props.data.children[0]);
+				var numberOfChildren = this.props.data.children.length - 1;
+				var middleIndex      = parseInt(numberOfChildren/2);
+
+				initialFuture.push(this.props.data.children[middleIndex]);
 			}
 
 			this.setState({
@@ -129,7 +135,10 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 
 		tmpPast.push(this.state.current);
 		if (item.children) {
-			newFuture.push(item.children[0]);
+			var numberOfChildren = item.children.length - 1;
+			var middleIndex      = parseInt(numberOfChildren/2);
+
+			newFuture.push(item.children[middleIndex]);
 		}
 
 		this.setState({
@@ -180,7 +189,10 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 			var goToItem  = newFuture.shift();
 
 			if (newFuture.length === 0 && goToItem.children) {
-				newFuture.push(goToItem.children[0]);
+				var numberOfChildren = goToItem.children.length - 1;
+				var middleIndex      = parseInt(numberOfChildren/2);
+
+				newFuture.push(goToItem.children[middleIndex]);
 			}
 
 			// add current Item and the items removed from future to past

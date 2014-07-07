@@ -13,7 +13,10 @@ var ComposedView = React.createClass({
 		if (!this.state.current) {
 			var initialFuture = [];
 			if (this.props.data.children) {
-				initialFuture.push(this.props.data.children[0]);
+				var numberOfChildren = this.props.data.children.length - 1;
+				var middleIndex      = parseInt(numberOfChildren/2);
+
+				initialFuture.push(this.props.data.children[middleIndex]);
 			}
 
 			this.setState({
@@ -32,7 +35,10 @@ var ComposedView = React.createClass({
 
 		tmpPast.push(this.state.current);
 		if (item.children) {
-			newFuture.push(item.children[0]);
+			var numberOfChildren = item.children.length - 1;
+			var middleIndex      = parseInt(numberOfChildren/2);
+
+			newFuture.push(item.children[middleIndex]);
 		}
 
 		this.setState({
@@ -83,7 +89,10 @@ var ComposedView = React.createClass({
 			var goToItem  = newFuture.shift();
 
 			if (newFuture.length === 0 && goToItem.children) {
-				newFuture.push(goToItem.children[0]);
+				var numberOfChildren = goToItem.children.length - 1;
+				var middleIndex      = parseInt(numberOfChildren/2);
+
+				newFuture.push(goToItem.children[middleIndex]);
 			}
 
 			// add current Item and the items removed from future to past
