@@ -7,7 +7,7 @@ var ChildList = React.createClass({
 	render: function() {	
 		var itemList = this.props.items;
 		if (!itemList) {
-			itemList = [{name:'', image: 'data/empty.png'}];
+			itemList = [{id: 'empty', name:'', image: 'data/empty.png'}];
 		}
 
 		var	Items = itemList.map(function(item, i) {

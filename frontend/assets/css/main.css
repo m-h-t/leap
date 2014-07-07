@@ -25,6 +25,10 @@
   .current-item .item-image {
     margin: 0 auto; }
 
+.child-list-wrapper {
+  background: url(../img/arrow.png) no-repeat 411px 15px;
+  height: 130px; }
+
 .child-list {
   list-style: none;
   margin: 0;
