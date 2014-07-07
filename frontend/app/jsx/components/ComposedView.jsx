@@ -9,23 +9,6 @@ var ComposedView = React.createClass({
 		return this.props.initalState;
 	},
 
-	componentWillMount: function () {
-		if (!this.state.current) {
-			var initialFuture = [];
-			if (this.props.data.children) {
-				var numberOfChildren = this.props.data.children.length - 1;
-				var middleIndex      = parseInt(numberOfChildren/2);
-
-				initialFuture.push(this.props.data.children[middleIndex]);
-			}
-
-			this.setState({
-				current: this.props.data,
-				future: initialFuture
-			});
-		}
-	},
-
 	goToItem: function (item) {
 		// go to specified item
 		// add current item to past

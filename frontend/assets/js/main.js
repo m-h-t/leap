@@ -110,23 +110,6 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 		return this.props.initalState;
 	},
 
-	componentWillMount: function () {
-		if (!this.state.current) {
-			var initialFuture = [];
-			if (this.props.data.children) {
-				var numberOfChildren = this.props.data.children.length - 1;
-				var middleIndex      = parseInt(numberOfChildren/2);
-
-				initialFuture.push(this.props.data.children[middleIndex]);
-			}
-
-			this.setState({
-				current: this.props.data,
-				future: initialFuture
-			});
-		}
-	},
-
 	goToItem: function (item) {
 		// go to specified item
 		// add current item to past
@@ -311,7 +294,7 @@ var PathList = React.createClass({displayName: 'PathList',
 	
 	render: function() {	
 		var currentPath  = this.props.storedPaths[this.props.currentPathId];
-		var movePosition = parseInt((this.props.currentPathId * -222) + this.props.viewOffset);
+		var movePosition = parseInt(this.props.viewOffset);
 
 		var Paths = this.props.storedPaths.map(function(path,index) {
 			var classes = ClassSet({
@@ -321,9 +304,12 @@ var PathList = React.createClass({displayName: 'PathList',
 
 			return (
 				React.DOM.li( 
-					{key:        path.current.id + index,
+					{key:        'path' + index,
 					className:  classes,
-					style:      {transform: 'translateX('+ movePosition +'px)'}}, 
+					style:      {
+						left: this.props.currentPathId * -222,
+						transform: 'translateX('+ movePosition +'px)'
+					}}, 
 					path.current.id
 				)
 			);
@@ -342,8 +328,11 @@ var PathList = React.createClass({displayName: 'PathList',
 
 var ProductViewer = React.createClass({displayName: 'ProductViewer',
 	getInitialState: function () {
+		var numberOfChildren = this.props.data.children.length - 1;
+		var middleIndex      = parseInt(numberOfChildren/2);
+
 		return {
-			storedPaths:           [{past: [], future: [], current: false}],
+			storedPaths:           [{past: [], future: [this.props.data.children[middleIndex]], current: this.props.data}],
 			currentPathId:         0,
 			scrolled:              0,
 			viewOffset:            0,
@@ -425,7 +414,7 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 				} else if (this.state.navigationGestureIsOn && prevFingerCount >= hand.fingers.length) {
 					// save path
 					if (startFrame) {
-						if (frame.rotationAngle(startFrame) > 0.5) {
+						if (frame.rotationAngle(startFrame) > 0.7) {
 							this.savePath();
 							this.setState({navigationGestureIsOn: false});
 							startFrame = null;

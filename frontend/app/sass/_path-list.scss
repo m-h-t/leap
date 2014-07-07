@@ -10,7 +10,8 @@
 	white-space: nowrap;
 }
 .path-list-element {
-	transition: 0.2s;
+	transition: left 0.5s;
+	position: relative;
 	background-color: $grey;
 	border: 1px solid darken($grey,20%);
 	border-radius: 3px;

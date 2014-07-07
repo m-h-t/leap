@@ -3,8 +3,11 @@
 
 var ProductViewer = React.createClass({
 	getInitialState: function () {
+		var numberOfChildren = this.props.data.children.length - 1;
+		var middleIndex      = parseInt(numberOfChildren/2);
+
 		return {
-			storedPaths:           [{past: [], future: [], current: false}],
+			storedPaths:           [{past: [], future: [this.props.data.children[middleIndex]], current: this.props.data}],
 			currentPathId:         0,
 			scrolled:              0,
 			viewOffset:            0,
@@ -86,7 +89,7 @@ var ProductViewer = React.createClass({
 				} else if (this.state.navigationGestureIsOn && prevFingerCount >= hand.fingers.length) {
 					// save path
 					if (startFrame) {
-						if (frame.rotationAngle(startFrame) > 0.5) {
+						if (frame.rotationAngle(startFrame) > 0.7) {
 							this.savePath();
 							this.setState({navigationGestureIsOn: false});
 							startFrame = null;

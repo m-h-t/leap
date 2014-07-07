@@ -76,7 +76,8 @@
   white-space: nowrap; }
 
 .path-list-element {
-  transition: 0.2s;
+  transition: left 0.5s;
+  position: relative;
   background-color: #cecfd1;
   border: 1px solid #999ca0;
   border-radius: 3px;
