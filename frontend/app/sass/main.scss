@@ -1,76 +1,18 @@
+$grey: #cecfd1;
+
+.product-viewer {
+	margin-top: 50px;
+	font-family: 'open sans',sans-serif;
+	color: #333;
+}
+
 .composed-view {
 	width: 1050px;
 	margin: 0 auto;
 	overflow-y: hidden;
 }
-.path-list {
-	width: 1050px;
-	margin: 20px auto;
-	text-align: center;
-	list-style: none;
-	font-size: 22px;
-}
-.path-list-element {
-	float: left;
-	margin-right: 10px;
-	&.is-current {
-		color: red;
-	}
-}
-.view-center {
-	width: 900px;
-	overflow-y: auto;
-	float: left;
-	margin-right: 5px;
-}
-.current-element {
-	border: 1px solid;
-	padding: 12px;
-}
-.child-list {
-	height: 100px;
-	list-style: none;
-	border: 1px solid;
-	padding: 12px;
-	margin: 0;
-	margin-bottom: 10px;
-	overflow: hidden;
-	white-space: nowrap;
-}
-.child-item {
-	width: 100px;
-	height: 100px;
-	display: inline-block;
-	white-space: normal;
-	margin-right: 5px;
-	overflow: hidden;
-	&.is-current-future {
-	    -webkit-transition: 0.6s;
-    	transition: 0.6s;
-		background-color: red;
-	}
 
-	.child-image {
-		width: 100%;
-		height: auto;
-	}
-}
-
-.history-list {
-	width: 50px;
-	min-height: 1px;
-	list-style: none;
-	padding: 0;
-	margin: 0 10px 0;
-	float: left;
-}
-.history-item {
-	width: 50px;
-	height: 50px;
-	margin-bottom: 5px;
-
-	.history-image {
-		width: 100%;
-		height: auto;
-	}
-}
+@import 'view-center';
+@import 'child-list';
+@import 'path-list';
+@import 'history-list';

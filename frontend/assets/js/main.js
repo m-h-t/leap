@@ -74,15 +74,24 @@ var ChildList = React.createClass({displayName: 'ChildList',
 					{className:  classes,
 					key:        item.id + i,
 					onClick:    function(){this.props.goToItem(item);}.bind(this)}, 
-						item.name,
+						React.DOM.p( {className:  "child-name"}, 
+							item.name
+						),
 						React.DOM.img( {className:"child-image", src:'../data/bike/' + item.image} )
 				);
 				
 			},this);
 		}
 
-		return React.DOM.ul( {className:"child-list"}, 
-			Items
+		return (
+			React.DOM.div( {className:  "child-list-wrapper"}, 
+				React.DOM.p( {className:  "title"}, 
+					"Parts:"
+				),
+				React.DOM.ul( {className:  "child-list"}, 
+					Items
+				)
+			)
 		);
 	}
 });
@@ -220,15 +229,24 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 						{items:     this.state.past, 
 						goToItem:  this.goToPast}),
 
-					React.DOM.div( {className:  "view-center"}, 
+					React.DOM.div( 
+						{className:  "view-center"}, 
+						React.DOM.div(
+							{className:  "current-item"}, 
+							React.DOM.h2( 
+								{className:  "item-name"}, 
+								item.name
+							),
+							React.DOM.img( 
+								{className:  "item-image",
+								src:'../data/bike/' + item.image} 
+								)
+						),
 						ChildList( 
 							{items:               item.children, 
 							currentFutureIndex:  currentFutureIndex,
 							goToItem:            this.goToItem,
-							highlightChurrent:   this.props.navigationGestureIsOn}),
-
-						item.name, " ", React.DOM.br(null),
-						React.DOM.img( {src:'../data/bike/' + item.image} )
+							highlightChurrent:   this.props.navigationGestureIsOn})
 					),
 
 					HistoryList(

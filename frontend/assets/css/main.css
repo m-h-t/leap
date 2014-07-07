@@ -1,7 +1,70 @@
+.product-viewer {
+  margin-top: 50px;
+  font-family: 'open sans', sans-serif;
+  color: #333; }
+
 .composed-view {
   width: 1050px;
   margin: 0 auto;
   overflow-y: hidden; }
+
+.view-center {
+  width: 900px;
+  overflow-y: auto;
+  float: left;
+  margin-right: 5px; }
+
+.current-item {
+  background-color: #cecfd1;
+  padding: 20px;
+  text-align: center; }
+  .current-item .item-name {
+    padding: 0;
+    margin: 0;
+    font-size: 25px;
+    text-align: left; }
+  .current-item .item-image {
+    margin: 0 auto; }
+
+.child-list {
+  list-style: none;
+  margin: 0;
+  padding: 3px;
+  text-align: center;
+  margin-bottom: 10px;
+  overflow: hidden;
+  white-space: nowrap; }
+
+.title {
+  text-align: left;
+  margin: 15px 3px 2px; }
+
+.child-item {
+  position: relative;
+  background-color: #cecfd1;
+  color: #fff;
+  display: inline-block;
+  white-space: normal;
+  padding: 5px;
+  margin-right: 5px;
+  border-radius: 2px; }
+  .child-item.is-current-future {
+    -webkit-transition: 0.6s;
+    transition: 0.6s;
+    color: #000;
+    box-shadow: 0 0 5px #000;
+    text-shadow: 0 0 4px #fff, 0 0 2px #fff; }
+  .child-item .child-name {
+    position: absolute;
+    bottom: 3px;
+    margin: 0;
+    width: 100px;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden; }
+  .child-item .child-image {
+    width: 100px;
+    height: auto; }
 
 .path-list {
   width: 1050px;
@@ -15,41 +78,6 @@
   margin-right: 10px; }
   .path-list-element.is-current {
     color: red; }
-
-.view-center {
-  width: 900px;
-  overflow-y: auto;
-  float: left;
-  margin-right: 5px; }
-
-.current-element {
-  border: 1px solid;
-  padding: 12px; }
-
-.child-list {
-  height: 100px;
-  list-style: none;
-  border: 1px solid;
-  padding: 12px;
-  margin: 0;
-  margin-bottom: 10px;
-  overflow: hidden;
-  white-space: nowrap; }
-
-.child-item {
-  width: 100px;
-  height: 100px;
-  display: inline-block;
-  white-space: normal;
-  margin-right: 5px;
-  overflow: hidden; }
-  .child-item.is-current-future {
-    -webkit-transition: 0.6s;
-    transition: 0.6s;
-    background-color: red; }
-  .child-item .child-image {
-    width: 100%;
-    height: auto; }
 
 .history-list {
   width: 50px;

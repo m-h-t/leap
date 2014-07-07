@@ -132,15 +132,24 @@ var ComposedView = React.createClass({
 						items    = {this.state.past} 
 						goToItem = {this.goToPast}/>
 
-					<div className = "view-center">
+					<div 
+						className = "view-center">
+						<div
+							className = "current-item">
+							<h2 
+								className = "item-name">
+								{item.name}
+							</h2>
+							<img 
+								className = "item-image"
+								src={'../data/bike/' + item.image} 
+								/>
+						</div>
 						<ChildList 
 							items              = {item.children} 
 							currentFutureIndex = {currentFutureIndex}
 							goToItem           = {this.goToItem}
 							highlightChurrent  = {this.props.navigationGestureIsOn}/>
-
-						{item.name} <br/>
-						<img src={'../data/bike/' + item.image} />
 					</div>
 
 					<HistoryList

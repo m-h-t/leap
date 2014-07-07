@@ -18,15 +18,24 @@ var ChildList = React.createClass({
 					className = {classes}
 					key       = {item.id + i}
 					onClick   = {function(){this.props.goToItem(item);}.bind(this)}>
-						{item.name}
+						<p className = "child-name">
+							{item.name}
+						</p>
 						<img className="child-image" src={'../data/bike/' + item.image} />
 				</li>;
 				
 			},this);
 		}
 
-		return <ul className="child-list">
-			{Items}
-		</ul>;
+		return (
+			<div className = "child-list-wrapper">
+				<p className = "title">
+					Parts:
+				</p>
+				<ul className = "child-list">
+					{Items}
+				</ul>
+			</div>
+		);
 	}
 });
