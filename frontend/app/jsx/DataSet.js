@@ -11,8 +11,9 @@ function DataSet(path) {
 
 	var x2js = new X2JS();
 
-	var json = x2js.xml2json( xmlDoc );
+	var json        = x2js.xml2json( xmlDoc );
 	var beatifulObj = beautitfyJson(json.VGraph.N);
+
 	return beatifulObj;
 }
 
@@ -25,9 +26,10 @@ function beautitfyJson (json) {
  	}
 
  	var children = json.N;
+ 	
  	if (children && children.Data) {
  		// only one child -> obj
- 		beatifulObj.children = [];
+ 		beatifulObj.children    = [];
  		beatifulObj.children[0] = beautitfyJson(children);
 
  	} else if (children) {
