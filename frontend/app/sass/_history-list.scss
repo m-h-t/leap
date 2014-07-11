@@ -1,15 +1,30 @@
-.history-list {
-	width: 70px;
+.history-lists {
+	float: left;
+	width: 90px;
 	min-height: 1px;
+	margin-right: 5px;
+}
+.history-list {
 	list-style: none;
 	padding: 0;
-	margin: 0 5px 0;
-	float: left;
+	margin: 0;
+}
+.arrow {
+	margin-top: 0;
+	border: 0;
+	border-top: 6px solid;
+	border-bottom: 6px solid;
+	border-color:$grey;
+	border-left: 12px solid red;
+	
+	height: 2px;
+	background-color: red;
+	margin-right: -5px;
 }
 .history-item {
 	position: relative;
-	width: 70px;
-	height: 70px;
+	width: 90px;
+	height: 90px;
 	margin-bottom: 5px;
 	background-color: $grey;
 	

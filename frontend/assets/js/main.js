@@ -220,9 +220,18 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 		return (
 			React.DOM.div( 
 				{className:  "composed-view"}, 
-					HistoryList(
-						{items:     this.state.past, 
-						goToItem:  this.goToPast}),
+					React.DOM.div( 
+						{className:  "history-lists"}, 
+						HistoryList(
+							{items:     this.state.past, 
+							goToItem:  this.goToPast}),
+
+						React.DOM.hr( {className:  "arrow"} ),
+
+						HistoryList(
+							{items:     this.state.future, 
+							goToItem:  this.goToFuture})
+					),
 
 					React.DOM.div( 
 						{className:  "view-center"}, 
@@ -242,11 +251,7 @@ var ComposedView = React.createClass({displayName: 'ComposedView',
 							currentFutureIndex:  currentFutureIndex,
 							goToItem:            this.goToItem,
 							highlightChurrent:   this.props.navigationGestureIsOn})
-					),
-
-					HistoryList(
-						{items:     this.state.future, 
-						goToItem:  this.goToFuture})
+					)
 			)
 		);
 	}
@@ -381,18 +386,18 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 						this.setState({navigationGestureIsOn: true});
 
 					} else {
-						var moveOnZAxis = (Math.abs(frame.translation(startFrame)[2]) > Math.abs(frame.translation(startFrame)[0]));
-						var threshold   = 15;
+						var moveOnYAxis = (Math.abs(frame.translation(startFrame)[1]) > Math.abs(frame.translation(startFrame)[0]));
+						var threshold   = 25;
 
-						if (moveOnZAxis) {
+						if (moveOnYAxis) {
 							// navigate through history
-							var distance = frame.translation(startFrame)[2];
+							var distance = frame.translation(startFrame)[1];
 
 							if (distance > threshold) {
-								currentPath.goToFuture(-1);
+								currentPath.goToPast(-1);
 								startFrame = null;
 							} else if (distance < -threshold){
-								currentPath.goToPast(-1);
+								currentPath.goToFuture(-1);
 								startFrame = null;
 							}
 
@@ -504,7 +509,7 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 		copyOfState.past    = currentPath.state.past.slice();
 		copyOfState.future  = currentPath.state.future.slice();
 
-		var tempPaths = this.state.storedPaths;
+		var tempPaths = this.state.storedPaths.slice();
 		if (updateExisting) {
 			tempPaths[this.state.currentPathId] = copyOfState;
 		} else {
@@ -518,7 +523,7 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 	},
 
 	deletePath: function () {
-		var tempPaths = this.state.storedPaths;
+		var tempPaths = this.state.storedPaths.slice();
 		if (tempPaths.length > 1) {
 			tempPaths.splice(this.state.currentPathId,1);
 

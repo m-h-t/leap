@@ -56,18 +56,18 @@ var ProductViewer = React.createClass({
 						this.setState({navigationGestureIsOn: true});
 
 					} else {
-						var moveOnZAxis = (Math.abs(frame.translation(startFrame)[2]) > Math.abs(frame.translation(startFrame)[0]));
-						var threshold   = 15;
+						var moveOnYAxis = (Math.abs(frame.translation(startFrame)[1]) > Math.abs(frame.translation(startFrame)[0]));
+						var threshold   = 25;
 
-						if (moveOnZAxis) {
+						if (moveOnYAxis) {
 							// navigate through history
-							var distance = frame.translation(startFrame)[2];
+							var distance = frame.translation(startFrame)[1];
 
 							if (distance > threshold) {
-								currentPath.goToFuture(-1);
+								currentPath.goToPast(-1);
 								startFrame = null;
 							} else if (distance < -threshold){
-								currentPath.goToPast(-1);
+								currentPath.goToFuture(-1);
 								startFrame = null;
 							}
 
@@ -179,7 +179,7 @@ var ProductViewer = React.createClass({
 		copyOfState.past    = currentPath.state.past.slice();
 		copyOfState.future  = currentPath.state.future.slice();
 
-		var tempPaths = this.state.storedPaths;
+		var tempPaths = this.state.storedPaths.slice();
 		if (updateExisting) {
 			tempPaths[this.state.currentPathId] = copyOfState;
 		} else {
@@ -193,7 +193,7 @@ var ProductViewer = React.createClass({
 	},
 
 	deletePath: function () {
-		var tempPaths = this.state.storedPaths;
+		var tempPaths = this.state.storedPaths.slice();
 		if (tempPaths.length > 1) {
 			tempPaths.splice(this.state.currentPathId,1);
 

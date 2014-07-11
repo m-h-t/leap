@@ -119,9 +119,18 @@ var ComposedView = React.createClass({
 		return (
 			<div 
 				className = "composed-view">
-					<HistoryList
-						items    = {this.state.past} 
-						goToItem = {this.goToPast}/>
+					<div 
+						className = "history-lists">
+						<HistoryList
+							items    = {this.state.past} 
+							goToItem = {this.goToPast}/>
+
+						<hr className = "arrow" />
+
+						<HistoryList
+							items    = {this.state.future} 
+							goToItem = {this.goToFuture}/>
+					</div>
 
 					<div 
 						className = "view-center">
@@ -142,10 +151,6 @@ var ComposedView = React.createClass({
 							goToItem           = {this.goToItem}
 							highlightChurrent  = {this.props.navigationGestureIsOn}/>
 					</div>
-
-					<HistoryList
-						items    = {this.state.future} 
-						goToItem = {this.goToFuture}/>
 			</div>
 		);
 	}

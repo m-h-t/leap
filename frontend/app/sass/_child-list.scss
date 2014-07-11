@@ -1,6 +1,6 @@
 .child-list-wrapper {
 	background: url(../img/arrow.png) no-repeat 411px 15px;
-	height: 130px;
+	height: 134px;
 }
 .child-list {
 	list-style: none;
@@ -16,6 +16,7 @@
 	margin: 15px 3px 2px;
 }
 .child-item {
+	width: 96px;
   transition: 0.4s;
 	position: relative;
 	background-color: $grey;
@@ -23,10 +24,12 @@
 	display: inline-block;
 	white-space: normal;
 	padding: 5px;
+	border: 2px solid $grey;
 	margin-right: 5px;
-	border-radius: 2px;
+	border-radius: 4px;
 	&.is-current-future {
 		color: #000;
+		outline: 2px solid red inset; 
 		box-shadow: 0 0 5px #000;
 		text-shadow: 0 0 4px #fff, 0 0 2px #fff;
 	}

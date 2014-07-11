@@ -16,7 +16,8 @@
 .current-item {
   background-color: #cecfd1;
   padding: 20px;
-  text-align: center; }
+  text-align: center;
+  height: 300px; }
   .current-item .item-name {
     padding: 0;
     margin: 0;
@@ -27,7 +28,7 @@
 
 .child-list-wrapper {
   background: url(../img/arrow.png) no-repeat 411px 15px;
-  height: 130px; }
+  height: 134px; }
 
 .child-list {
   list-style: none;
@@ -43,6 +44,7 @@
   margin: 15px 3px 2px; }
 
 .child-item {
+  width: 96px;
   transition: 0.4s;
   position: relative;
   background-color: #cecfd1;
@@ -50,10 +52,12 @@
   display: inline-block;
   white-space: normal;
   padding: 5px;
+  border: 2px solid #cecfd1;
   margin-right: 5px;
-  border-radius: 2px; }
+  border-radius: 4px; }
   .child-item.is-current-future {
     color: #000;
+    outline: 2px solid red inset;
     box-shadow: 0 0 5px #000;
     text-shadow: 0 0 4px #fff, 0 0 2px #fff; }
   .child-item .child-name {
@@ -100,18 +104,32 @@
     border-color: #fff;
     box-shadow: 0 0 3px #000; }
 
-.history-list {
-  width: 70px;
+.history-lists {
+  float: left;
+  width: 90px;
   min-height: 1px;
+  margin-right: 5px; }
+
+.history-list {
   list-style: none;
   padding: 0;
-  margin: 0 5px 0;
-  float: left; }
+  margin: 0; }
+
+.arrow {
+  margin-top: 0;
+  border: 0;
+  border-top: 6px solid;
+  border-bottom: 6px solid;
+  border-color: #cecfd1;
+  border-left: 12px solid red;
+  height: 2px;
+  background-color: red;
+  margin-right: -5px; }
 
 .history-item {
   position: relative;
-  width: 70px;
-  height: 70px;
+  width: 90px;
+  height: 90px;
   margin-bottom: 5px;
   background-color: #cecfd1; }
   .history-item .history-image {
