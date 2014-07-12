@@ -26,7 +26,7 @@ function beautitfyJson (json) {
  	var values = json.Data.Attr;
 
  	for (var i = 0; i < values.length; i++) {
- 		beatifulObj[values[i].Key] = values[i].Value;
+ 		beatifulObj[values[i].Key] = values[i].Value.replace("\\", "/");
  	}
 
  	var children = json.N;
