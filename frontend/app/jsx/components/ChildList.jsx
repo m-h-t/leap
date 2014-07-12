@@ -16,9 +16,15 @@ var ChildList = React.createClass({
 			  'is-current-future': (this.props.currentFutureIndex == i && this.props.highlightChurrent),
 			});
 
+			var offset = this.props.currentFutureIndex * -115;
+			var offsetStyle = {
+				'-webkit-transform': 'translateX('+ offset +'px)',
+				'transform':         'translateX('+ offset +'px)'
+			};
+
 			return (
 				<li 
-					style     = {{transform: 'translateX('+this.props.currentFutureIndex * -115 +'px)'}}
+					style     = {offsetStyle}
 					className = {classes}
 					key       = {item.id + i}
 					onClick   = {function(){this.props.goToItem(item);}.bind(this)}>
