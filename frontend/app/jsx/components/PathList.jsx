@@ -19,8 +19,9 @@ var PathList = React.createClass({
 					key       = {'path' + index}
 					className = {classes}
 					style     = {{
-						left: this.props.currentPathId * -222,
-						transform: 'translateX('+ movePosition +'px)'
+						left:                 this.props.currentPathId * -222,
+						'-webkit-transform': 'translateX('+ movePosition +'px)',
+						transform:           'translateX('+ movePosition +'px)'
 					}}>
 					{path.current.id}
 				</li>
