@@ -26,7 +26,7 @@ function beautitfyJson (json) {
  	var values = json.Data.Attr;
 
  	for (var i = 0; i < values.length; i++) {
- 		beatifulObj[values[i].Key] = values[i].Value.replace("\\", "/");
+ 		beatifulObj[values[i].Key] = values[i].Value;
  	}
 
  	var children = json.N;
@@ -318,8 +318,9 @@ var PathList = React.createClass({displayName: 'PathList',
 					{key:        'path' + index,
 					className:  classes,
 					style:      {
-						left: this.props.currentPathId * -222,
-						transform: 'translateX('+ movePosition +'px)'
+						left:                 this.props.currentPathId * -222,
+						'-webkit-transform': 'translateX('+ movePosition +'px)',
+						transform:           'translateX('+ movePosition +'px)'
 					}}, 
 					path.current.id
 				)
@@ -568,7 +569,7 @@ var ProductViewer = React.createClass({displayName: 'ProductViewer',
 
 
 	//get bike data from xml
-	var bike = new DataSet('../data/bike/E-Bike_v4.xml');
+	var bike = new DataSet('data/bike/E-Bike_v4.xml');
 
 	//the leap controller
 	var leapController = new Leap.Controller();
