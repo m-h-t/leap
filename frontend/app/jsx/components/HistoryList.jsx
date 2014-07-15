@@ -16,7 +16,7 @@ var HistoryList = React.createClass({
 						onClick   = {function(){this.props.goToItem(i);}.bind(this)}>
 						<img 
 							className = "history-image" 
-							src       = {'/data/bike/' + item.image}/>
+							src       = {'data/bike/' + item.image}/>
 						<p className = "history-name">
 							{item.name}
 						</p>
