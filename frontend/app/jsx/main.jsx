@@ -11,7 +11,7 @@
 	//= require_tree /components
 
 	//get bike data from xml
-	var bike = new DataSet('../data/bike/E-Bike_v4.xml');
+	var bike = new DataSet('data/bike/E-Bike_v4.xml');
 
 	//the leap controller
 	var leapController = new Leap.Controller();
