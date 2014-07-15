@@ -31,7 +31,7 @@ var ChildList = React.createClass({
 						<p className = "child-name">
 							{item.name}
 						</p>
-						<img className="child-image" src={'../data/bike/' + item.image} />
+						<img className="child-image" src={'/data/bike/' + item.image} />
 				</li>
 			);
 			

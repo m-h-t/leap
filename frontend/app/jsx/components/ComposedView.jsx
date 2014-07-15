@@ -142,7 +142,7 @@ var ComposedView = React.createClass({
 							</h2>
 							<img 
 								className = "item-image"
-								src={'../data/bike/' + item.image} 
+								src={'/data/bike/' + item.image} 
 								/>
 						</div>
 						<ChildList 
