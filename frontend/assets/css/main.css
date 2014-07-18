@@ -57,7 +57,7 @@
   border-radius: 4px; }
   .child-item.is-current-future {
     color: #000;
-    outline: 2px solid red inset;
+    border: 2px solid green;
     box-shadow: 0 0 5px #000;
     text-shadow: 0 0 4px #fff, 0 0 2px #fff; }
   .child-item .child-name {
